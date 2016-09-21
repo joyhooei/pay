@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+	
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+    apply plugin: 'eclipse'
+    group = 'com.cupe.server'
+    version = '2.0'
+}
+
+subprojects{
+    apply plugin: 'java'
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    repositories {
+        mavenCentral()
+        maven { url "http://repo.spring.io/milestone" }
+    }
+
+	task copyJars(type: Copy) {
+	  from configurations.runtime
+	  into 'dist'
+	}
+
+	task fatJar(type: Jar) {
+		manifest {
+			attributes 'Implementation-Title': 'Gradle Jar File Example',
+			'Implementation-Version': version
+		}
+		baseName = project.name + '-all'
+		from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+		with jar
+	}
+
+    jar {
+        manifest {
+            
+        }
+    }
+}
