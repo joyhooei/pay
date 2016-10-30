@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vrg.payserver.dao.ChannelParamValueMapper">
+
+	<select id="getChannelParamValue" resultType="com.vrg.payserver.dao.model.ChannelParamValue">
+		SELECT  id,
+			    partner_id,
+			    channel_id,
+			    param_name,
+			    param_value
+		from cfg_channel_param
+		where partner_id= #{0} and channel_id = #{1} and param_name = #{2}
+	</select>
+</mapper>

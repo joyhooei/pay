@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property file="application.properties" />
+  <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
+  <property name="FILE_NAME_PREFIX" value="logs/sdkserver-${server.port}" />
+  <property name="DEFAULT_LOG_DIR" value="logs" />
+  <property name="DATA_LOG_DIR" value="datalogs" />
+  <property name="REQUEST_LOG_DIR" value="requestlogs" />
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+    <file>${DEFAULT_LOG_DIR}/payserver-${server.port}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${DEFAULT_LOG_DIR}/payserver-${server.port}-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>7</maxHistory>
+    </rollingPolicy>
+  </appender>
+  <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+    <file>${DEFAULT_LOG_DIR}/payserver-error-${server.port}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${DEFAULT_LOG_DIR}/payserver-error-${server.port}-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>7</maxHistory>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
+  <appender name="FILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+    <file>${DEFAULT_LOG_DIR}/payserver-warn-${server.port}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${DEFAULT_LOG_DIR}/payserver-warn-${server.port}-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>7</maxHistory>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>WARN</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
+  <appender name="BIZ_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${DEFAULT_LOG_DIR}/payserver-biz-${server.port}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${DEFAULT_LOG_DIR}/payserver-biz-${server.port}-%d{yyyyMMdd}.log</fileNamePattern>
+      <maxHistory>7</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="LOGIN_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${DATA_LOG_DIR}/login${xgsdk.server.ip}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- minute rollover -->
+      <fileNamePattern>${DATA_LOG_DIR}/login_archives/%d{yyyy-MM-dd,aux}/ip_${xgsdk.server.ip}/port_${server.port}/login_%d{yyyy-MM-dd_HH-mm}.log</fileNamePattern>
+      <!-- 60 * 24 * 7, keep last 7 days history -->
+      <maxHistory>10080</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="LOGIN_LOGGER" additivity="false">
+    <appender-ref ref="LOGIN_APPENDER" />
+  </logger>
+  <logger name="RECHARGE_LOGGER" additivity="false">
+    <appender-ref ref="RECHARGE_APPENDER" />
+  </logger>
+  <logger name="REQUEST_LOGGER" additivity="false">
+    <appender-ref ref="REQUEST_APPENDER" />
+  </logger>
+  <logger name="BIZ_LOGGER" additivity="false">
+    <appender-ref ref="BIZ_APPENDER" />
+  </logger>
+  <root level="INFO">
+    <appender-ref ref="FILE" />
+    <appender-ref ref="FILE_WARN" />
+    <appender-ref ref="FILE_ERROR" />
+  </root>
+</configuration>

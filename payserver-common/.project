@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>payserver-common</name>
-	<comment></comment>
+	<comment/>
 	<projects/>
 	<natures>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>

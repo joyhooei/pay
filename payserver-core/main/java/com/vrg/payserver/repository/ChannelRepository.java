@@ -33,7 +33,7 @@ public class ChannelRepository {
     private ConcurrentHashMap<String, IChannel> channels = new ConcurrentHashMap<String, IChannel>();
     private ConcurrentHashMap<String, ChannelImplementObject> implementObjectMap = new ConcurrentHashMap<>();
 
-    @Value("${xgsdk.channelimpljar.location.pattern}")
+    @Value("${paysdk.channelimpljar.location.pattern}")
     private String channelImplJarLocationPattern;
 
     @Autowired

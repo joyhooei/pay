@@ -388,14 +388,8 @@ public final class DefaultChannelService implements IChannel {
 
 			VerifyChannelOrderResponse response = new VerifyChannelOrderResponse();
 			response.setChannelTradeNo(prequest.getChannelTradeNo());
-			response.setChargeChannelId(prequest.getChargeChannelId());
-			response.setChargeChannelInst(prequest.getChargeChannelInst());
-			response.setChargeChannelType(prequest.getChargeChannelType());
 			response.setCode(ErrorCode.SUCCESS);
 			response.setMsg(ErrorCode.MSG_OK);
-			// 保存代金券
-			response.setVoucherAmount(prequest.getVoucherAmount());
-			response.setChannelBonusAmount(prequest.getChannelBonusAmount());
 			response.setPayStatus(prequest.getPayStatus());
 			return response;
 		} finally {
