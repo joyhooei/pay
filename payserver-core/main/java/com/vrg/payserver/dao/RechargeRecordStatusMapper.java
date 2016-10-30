@@ -8,7 +8,7 @@ import com.vrg.payserver.service.vo.RechargeRecordBase;
 public interface RechargeRecordStatusMapper {
 	int create(RechargeRecordBase rechargeRecordStatus);
 
-	int createFromFailLog(RechargeRecordBase rechargeRecordBase);
+//	int createFromFailLog(RechargeRecordBase rechargeRecordBase);
 	
 	RechargeRecordBase queryByTradeNo(String tradeNo);
 	

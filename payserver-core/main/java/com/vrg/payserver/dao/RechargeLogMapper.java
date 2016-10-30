@@ -10,5 +10,5 @@ public interface RechargeLogMapper {
 	
 	int create(RechargeRecordBase rechargeLog);
 
-	List<RechargeRecordBase> queryByChannelIdDate(int month, String channelId, String xgAppId, String day);
+	List<RechargeRecordBase> queryByChannelIdDate(int month, String channelId, String partnerId, String day);
 }

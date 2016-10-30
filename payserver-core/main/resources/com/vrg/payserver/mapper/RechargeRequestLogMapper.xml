@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vrg.payserver.dao.RechargeRequestLogMapper">
+
+	<insert id="create">
+		INSERT INTO recharge_request_log (
+			event_type,
+			trade_no,
+			channel_trade_no,
+			xg_app_id,
+			channel_id,
+			uid,
+			device_id,
+			request_time,
+			response_time,
+			request_ip,
+			request_header,
+			request_value1,
+			request_value2,
+			response_value1,
+			response_value2)
+		VALUES (
+			#{eventType,jdbcType=VARCHAR}, 
+			#{tradeNo,jdbcType=VARCHAR},
+			#{channelTradeNo,jdbcType=VARCHAR},
+			#{xgAppId,jdbcType=VARCHAR},
+			#{channelId,jdbcType=VARCHAR},
+			#{uid,jdbcType=VARCHAR},
+			#{deviceId,jdbcType=VARCHAR},
+			#{requestTime},
+			#{responseTime},
+			#{requestIp,jdbcType=VARCHAR},
+			#{requestHeader,jdbcType=VARCHAR},
+			#{requestValue1,jdbcType=VARCHAR},
+			#{requestValue2,jdbcType=VARCHAR}, 
+			#{responseValue1,jdbcType=VARCHAR},
+			#{responseValue2,jdbcType=VARCHAR})
+	</insert>
+	
+	<delete id="delete">
+        truncate table recharge_request_log
+    </delete>
+</mapper>

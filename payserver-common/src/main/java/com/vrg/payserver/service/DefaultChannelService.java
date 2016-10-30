@@ -150,7 +150,7 @@ public final class DefaultChannelService implements IChannel {
 					request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
 					ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
 					responseString = responseEntity.getBody();
-					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
+//					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
 					return responseEntity;
 				}
 
