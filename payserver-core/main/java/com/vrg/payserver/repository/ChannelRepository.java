@@ -24,7 +24,6 @@ import com.vrg.payserver.util.Log;
 @Service
 public class ChannelRepository {
     public static final String CLASS_PATTERN = "com.xgsdk.sdkserver.impl.ChannelFactory";
-    private static final String KEY_PATTERN = "%s__%s";
 
     private ConcurrentHashMap<String, IChannel> channels = new ConcurrentHashMap<String, IChannel>();
     private ConcurrentHashMap<String, ChannelImplementObject> implementObjectMap = new ConcurrentHashMap<>();
@@ -39,8 +38,7 @@ public class ChannelRepository {
         if (!implementObjectMap.containsKey(channelId)) {
             syncLoadChanelImplement(channelId);
         }
-        String key = String.format(KEY_PATTERN, channelId);
-        return channels.get(key);
+        return channels.get(channelId);
     }
 
     private void syncLoadChanelImplement(String channelId) {
@@ -111,10 +109,9 @@ public class ChannelRepository {
         IChannelFactory channelFactory = (IChannelFactory) object;
         Map<String, IChannel> channelImpls = channelFactory.createChannelWithVersions();
         for (Entry<String, IChannel> entry : channelImpls.entrySet()) {
-            String key = String.format(KEY_PATTERN, channelId, entry.getKey());
             IChannel channel = entry.getValue();
             channel.setServerCoreService(serverCoreService);
-            channels.put(key, channel);
+            channels.put(channelId, channel);
         }
     }
 

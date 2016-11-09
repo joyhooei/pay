@@ -14,6 +14,7 @@ import com.vrg.payserver.service.vo.CreateChannelOrderResponseData;
 import com.vrg.payserver.util.CurrencyUtil;
 import com.vrg.payserver.util.DateUtil;
 import com.vrg.payserver.util.ErrorCode;
+import com.vrg.payserver.util.HttpUtils;
 import com.vrg.payserver.util.Util;
 import com.xgsdk.sdkserver.impl.vo.KuBeiCreateOrderRequest;
 import com.xgsdk.sdkserver.impl.vo.KuBeiNotifyRequest;
@@ -22,9 +23,9 @@ import com.xgsdk.sdkserver.impl.vo.KuBeiNotifyRequest;
  *
  */
 public class KuBeiChannelAdapter implements IChannelAdapter {
-	private static final String PID = "hisense";
-	private static final String MACID = "appId";
-	private static final String KEY = "appKey";
+	private static final String PID = "160080";
+	private static final String MACID = "0199800000000749";
+	private static final String KEY = "BB1F64449C0FE32B81DFE37BBBFD288A";
 	private static final String NOTIFY_URL = "http://121.201.65.16:18888/GetRequest";
 	private IServerCoreService serverCoreService;
 
@@ -83,7 +84,8 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
     	kudongPay.setP2(request.getTradeNo());
     	kudongPay.setP3(request.getPaidAmount());
     	
-    	String doGet = Util.doGet("http://demo.counect.com/vcupe/getPay.do?" + kudongPay.genURLParameter(KEY));
+    	String doGet = HttpUtils.doGet("http://demo.counect.com/vcupe/getPay.do?" + kudongPay.genURLParameter(KEY));
+
     	data.setUrl(doGet);
         return response;
 	}

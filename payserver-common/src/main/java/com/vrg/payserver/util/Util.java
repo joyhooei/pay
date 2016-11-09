@@ -1,23 +1,16 @@
 package com.vrg.payserver.util;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.KeyManagementException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SignatureException;
-import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.DateFormat;
@@ -40,11 +33,6 @@ import java.util.Set;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
@@ -74,18 +62,6 @@ public class Util {
 	public static final String REQUEST_SEPARATOR = "&";
 	public static final String REQUEST_CONTENTTYPE = "Content-Type";
 	public static final String SEPARATOR = "__";
-
-	public static String doGet(String url) {
-		return HttpUtils.doGet(url);
-	}
-
-	public static String doGet(String url, Map<String, String> header) {
-		return HttpUtils.doGet(url, header);
-	}
-
-	public static String doPostJson(String url, String body, Map<String, String> headers) {
-		return HttpUtils.doPostJson(url, body, headers);
-	}
 
 	/**
 	 * MD5 加密
@@ -608,84 +584,6 @@ public class Util {
 			return new String(baos.toByteArray(), Util.ENCODING);
 		}
 		return strString;
-	}
-
-	/**
-	 *
-	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static String postHttps(String url, String params) {
-		InputStream urlStream = null;
-		BufferedReader reader = null;
-		try {
-			verifierHostname();
-			URLConnection urlCon = (new URL(url)).openConnection();
-			urlCon.setDoOutput(true);
-			OutputStreamWriter out = new OutputStreamWriter(urlCon.getOutputStream(), "utf-8");
-			out.write(params);
-			// remember to clean up
-			out.flush();
-			out.close();
-			// �?旦发送成功，用以下方法就可以得到服务器的回应�?
-			StringBuilder sTotalString = new StringBuilder();
-			String sCurrentLine = "";
-			urlStream = urlCon.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(urlStream));
-			while ((sCurrentLine = reader.readLine()) != null) {
-				sTotalString.append(sCurrentLine);
-			}
-			return sTotalString.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (urlStream != null) {
-				try {
-					urlStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return "";
-	}
-
-	private static void verifierHostname() throws NoSuchAlgorithmException, KeyManagementException {
-		SSLContext sslContext = SSLContext.getInstance("TLS");
-		X509TrustManager xtm = new X509TrustManager() {
-			@Override
-			public void checkClientTrusted(X509Certificate[] chain, String authType) {
-			}
-
-			@Override
-			public void checkServerTrusted(X509Certificate[] chain, String authType) {
-			}
-
-			@Override
-			public X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-		};
-		X509TrustManager[] xtmArray = new X509TrustManager[] { xtm };
-		sslContext.init(null, xtmArray, new java.security.SecureRandom());
-		if (sslContext != null) {
-			HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-		}
-		HostnameVerifier hnv = new HostnameVerifier() {
-			@Override
-			public boolean verify(String hostname, SSLSession session) {
-				return true;
-			}
-		};
-		HttpsURLConnection.setDefaultHostnameVerifier(hnv);
 	}
 
 	public static String getSigningString(Object request, String signFieldsName) {

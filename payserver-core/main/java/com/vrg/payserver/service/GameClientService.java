@@ -346,6 +346,7 @@ public class GameClientService {
 	public boolean verifySign(Object request, String sign, String partnerId, String channelId) {
 		String appKey = paramRepository.getServerSecret(partnerId);
 		String okSign = SignCore.xgSign(request, SignCore.SIGN_FIELD_NAME, appKey);
+		System.out.println(okSign);
 		boolean verifyResult = StringUtils.equalsIgnoreCase(sign, okSign);
 		return verifyResult;
 	}

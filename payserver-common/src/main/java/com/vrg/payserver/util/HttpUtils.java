@@ -44,10 +44,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public class HttpUtils {
   // private static final MediaType MEDIATYPE = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
   public static final String REQUEST_CONTENTTYPE = "Content-Type";

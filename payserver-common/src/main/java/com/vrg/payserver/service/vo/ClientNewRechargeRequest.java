@@ -3,8 +3,6 @@
  */
 package com.vrg.payserver.service.vo;
 
-import java.security.KeyStore.PrivateKeyEntry;
-
 import com.alibaba.fastjson.JSON;
 
 public class ClientNewRechargeRequest {

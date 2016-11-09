@@ -5,6 +5,7 @@
 
 	<insert id="create">
 		INSERT INTO recharge_record_status (
+			charge_log_id,
 			trade_no,
 			partner_id,
 			channel_id,
@@ -20,6 +21,7 @@
 			exception_info,
 			state_code
 		) values (
+			#{chargeLogId},
 			#{tradeNo,jdbcType=VARCHAR},
 			#{partnerId,jdbcType=VARCHAR},
 			#{channelId,jdbcType=VARCHAR},

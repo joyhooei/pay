@@ -47,7 +47,7 @@ public class RechargeRecordBase {
 	// CHANNEL_TRADE_NO VARCHAR(64) 渠道订单号
 	private String channelTradeNo;
 	// CHARGE_CHANNEL_INST VARCHAR2(128) 支付渠道详细信息(中国工商银行)
-	private String channelTradeInst;
+	private String chargeChannelInst;
 	// SEARCH_CHANNEL_ORDER_TIMES NUMBER(2)
 	// 查询渠道订单状态次数(以1分钟为基数，次方递增，1分钟轮询一次，2、4、8、16...分钟继续轮询）
 	private int searchChannelOrderTimes;
@@ -141,12 +141,12 @@ public class RechargeRecordBase {
 		this.channelTradeNo = channelTradeNo;
 	}
 
-	public String getChannelTradeInst() {
-		return channelTradeInst;
+	public String getChargeChannelInst() {
+		return chargeChannelInst;
 	}
 
-	public void setChannelTradeInst(String channelTradeInst) {
-		this.channelTradeInst = channelTradeInst;
+	public void setChargeChannelInst(String chargeChannelInst) {
+		this.chargeChannelInst = chargeChannelInst;
 	}
 
 	public int getSearchChannelOrderTimes() {
