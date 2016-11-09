@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vrg.payserver.dao.RechargeRecordStatusMapper">
+
+	<insert id="create">
+		INSERT INTO recharge_record_status (
+			trade_no,
+			partner_id,
+			channel_id,
+			device_id,
+			paid_amount,
+			paid_time,
+			channel_trade_no,
+			charge_channel_inst,
+			search_channel_order_times,
+			status,
+			custom_info,
+			create_time,
+			exception_info,
+			state_code
+		) values (
+			#{tradeNo,jdbcType=VARCHAR},
+			#{partnerId,jdbcType=VARCHAR},
+			#{channelId,jdbcType=VARCHAR},
+			#{deviceId,jdbcType=VARCHAR},
+			#{paidAmount},
+			now(),
+			#{channelTradeNo,jdbcType=VARCHAR},
+			#{chargeChannelInst,jdbcType=VARCHAR},
+			#{searchChannelOrderTimes},
+			#{status},
+			#{customInfo,jdbcType=VARCHAR},
+			now(),
+			#{exceptionInfo,jdbcType=VARCHAR},
+			#{stateCode,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="queryByTradeNo" resultType="com.vrg.payserver.service.vo.RechargeRecordBase">
+		SELECT
+			trade_no,
+			partner_id,
+			channel_id,
+			device_id,
+			paid_amount,
+			paid_time,
+			channel_trade_no,
+			charge_channel_inst,
+			search_channel_order_times,
+			status,
+			custom_info,
+			create_time,
+			exception_info,
+			state_code
+		from recharge_record_status
+		where trade_no= #{0}
+	</select>
+	
+	<select id="queryByChannelIdDate" resultType="com.vrg.payserver.service.vo.RechargeRecordBase">
+		SELECT
+			trade_no,
+			partner_id,
+			channel_id,
+			device_id,
+			paid_amount,
+			paid_time,
+			channel_trade_no,
+			charge_channel_inst,
+			search_channel_order_times,
+			status,
+			custom_info,
+			create_time,
+			exception_info,
+			state_code
+		from recharge_record_status
+		where channel_trade_no= #{0} and channel_id=#{1}
+	</select>
+</mapper>

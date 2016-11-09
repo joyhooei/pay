@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateUtil {
-	private static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	private static final String DEFAULT_PATTERN = "yyyyMMddhhmmss";
 
 	public static Date parse(String dateStr) {
 		try {

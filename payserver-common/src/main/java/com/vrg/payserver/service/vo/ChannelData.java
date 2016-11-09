@@ -45,11 +45,18 @@ public class ChannelData {
 	 * 支付状态
 	 */
 	private String payStatus;
-
+	
+	private String stateCode;
+	
+	
+	private String stateMsg;
+	
 	/**
 	 * 附加信息
 	 */
 	private String customInfo;
+	
+	private Object channelObject;
 	
 	public String getPartnerId() {
 		return partnerId;
@@ -121,6 +128,30 @@ public class ChannelData {
 
 	public void setCustomInfo(String customInfo) {
 		this.customInfo = customInfo;
+	}
+
+	public Object getChannelObject() {
+		return channelObject;
+	}
+
+	public void setChannelObject(Object channelObject) {
+		this.channelObject = channelObject;
+	}
+
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
+	}
+
+	public String getStateMsg() {
+		return stateMsg;
+	}
+
+	public void setStateMsg(String stateMsg) {
+		this.stateMsg = stateMsg;
 	}
 
 	@Override

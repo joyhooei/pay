@@ -97,13 +97,13 @@ public class ChannelService {
 				record.setStateCode(response.getCode());
 				record.setExceptionInfoTrimedWhenExtendLength(response.getMsg());
 				rechargeRecordStatusMapper.update(record);
-				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
+//				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
 				return;
 			}
 			// 如果验证不成功
 			if (!StringUtils.equalsIgnoreCase(ErrorCode.SUCCESS, response.getCode())) {
 				this.increaseTimes(record, response, 1);
-				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
+//				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
 				return;
 			}
 			this.setRechargeRecordBase(response, record);
@@ -122,10 +122,10 @@ public class ChannelService {
 				// rechargeRecordStatusMapper.update(record);
 				// serverCoreService.onPayFail(record);
 			}
-			Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
+//			Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
 			return;
 		} catch (Throwable t) {
-			String msg = MessageFormat.format("error in search the order[{0}] of product[{1}] from channel[{2}] server. The error is [{3}].", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), t.getMessage());
+			String msg = "";//MessageFormat.format("error in search the order[{0}] of product[{1}] from channel[{2}] server. The error is [{3}].", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), t.getMessage());
 			Log.supplementMessage(msg);
 			Log.supplementExceptionMessage(t);
 			record.setSearchChannelOrderTimes(record.getSearchChannelOrderTimes() + 1);
@@ -140,23 +140,15 @@ public class ChannelService {
 
 	private VerifyChannelOrderRequest getVerifyChannelOrderRequest(RechargeRecordBase record) {
 		VerifyChannelOrderRequest request = new VerifyChannelOrderRequest();
-		request.setBuildNumber(record.getBuildNumber());
+//		request.setBuildNumber(record.getBuildNumber());
 		request.setChannelAppId(record.getPartnerId());
 		request.setChannelId(record.getChannelId());
 		request.setChannelTradeNo(record.getChannelTradeNo());
 		request.setCustomInfo(record.getCustomInfo());
 		request.setDeviceId(record.getDeviceId());
 		request.setPaidAmount(record.getPaidAmount());
-		request.setPlanId(record.getPlanId());
-		request.setProductId(record.getProductId());
-		request.setProductName(record.getProductName());
-		request.setProductQuantity(record.getProductQuantity());
-		request.setRoleId(record.getRoleId());
-		request.setServerId(record.getServerId());
 		request.setTradeNo(record.getTradeNo());
 		request.setUid(record.getUid());
-		request.setXgAppId(record.getXgAppId());
-		request.setZoneId(record.getZoneId());
 		request.setCreateTime(record.getCreateTime());
 		return request;
 	}
@@ -164,27 +156,6 @@ public class ChannelService {
 	private void setRechargeRecordBase(VerifyChannelOrderResponse response, RechargeRecordBase record) {
 		if (!StringUtils.isEmpty(response.getChannelTradeNo())) {
 			record.setChannelTradeNo(response.getChannelTradeNo());
-		}
-		if (!StringUtils.isEmpty(response.getChargeChannelId())) {
-			record.setChargeChannelId(response.getChargeChannelId());
-		}
-		if (!StringUtils.isEmpty(response.getChargeChannelInst())) {
-			record.setChargeChannelInst(response.getChargeChannelInst());
-		}
-		if (!StringUtils.isEmpty(response.getChargeChannelType())) {
-			record.setChargeChannelType(response.getChargeChannelType());
-		}
-		if (!StringUtils.isEmpty(response.getProductId())) {
-			record.setProductId(response.getProductId());
-		}
-		if (!StringUtils.isEmpty(response.getRoleId())) {
-			record.setRoleId(response.getRoleId());
-		}
-		if (!StringUtils.isEmpty(response.getRoleName())) {
-			record.setRoleName(response.getRoleName());
-		}
-		if (!StringUtils.isEmpty(response.getServerId())) {
-			record.setServerId(response.getServerId());
 		}
 		if (!StringUtils.isEmpty(response.getUid())) {
 			record.setUid(response.getUid());
@@ -195,30 +166,8 @@ public class ChannelService {
 		if (response.getPaidTime() != null) {
 			record.setPaidTime(response.getPaidTime());
 		}
-		if (response.getProductQuantity() > 0) {
-			record.setProductQuantity(response.getProductQuantity());
-		}
-		if (!StringUtils.isEmpty(response.getProductName())) {
-			record.setProductName(response.getProductName());
-		}
-		if (!StringUtils.isEmpty(response.getProductDesc())) {
-			record.setProductDesc(response.getProductDesc());
-		}
 		if (!StringUtils.isEmpty(response.getCustomInfo())) {
 			record.setCustomInfo(response.getCustomInfo());
 		}
-		if (!StringUtils.isEmpty(response.getGameTradeNo())) {
-			record.setGameTradeNo(response.getGameTradeNo());
-		}
-		if (!StringUtils.isEmpty(response.getGameCallbackUrl())) {
-			record.setGameCallbackUrl(response.getGameCallbackUrl());
-		}
-		if (StringUtils.isNotEmpty(response.getCurrencyName())) {
-			record.setCurrencyName(response.getCurrencyName());
-		}
-		if (response.getTotalAmount() > 0) {
-			record.setTotalAmount(response.getTotalAmount());
-		}
-		record.setVoucherAmount(response.getVoucherAmount());
 	}
 }

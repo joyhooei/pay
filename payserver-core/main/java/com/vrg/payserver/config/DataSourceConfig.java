@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableConfigurationProperties(DataSourceProperties.class)
-@MapperScan("com.vrg.payserver.mapper")
+@MapperScan("com.vrg.payserver.dao")
 public class DataSourceConfig {
 
     private static final String MYBATIS_CONFIG_PATH = "classpath:mybatis-config.xml";
