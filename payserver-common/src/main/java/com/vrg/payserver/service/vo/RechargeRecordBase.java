@@ -71,7 +71,12 @@ public class RechargeRecordBase {
 	private String exceptionInfo;
 	// STATE_CODE VARCHAR2(16) 异常错误码
 	private String stateCode;
-
+	
+	/**
+	 * vrg在支付渠道的唯一标识
+	 */
+	private String channelPartnerId;
+	
 	public String getTradeNo() {
 		return tradeNo;
 	}
@@ -243,6 +248,14 @@ public class RechargeRecordBase {
 		this.partnerId = partnerId;
 	}
 	
+	public String getChannelPartnerId() {
+		return channelPartnerId;
+	}
+
+	public void setChannelPartnerId(String channelPartnerId) {
+		this.channelPartnerId = channelPartnerId;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

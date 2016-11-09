@@ -3,6 +3,8 @@
  */
 package com.vrg.payserver.service.vo;
 
+import java.security.KeyStore.PrivateKeyEntry;
+
 import com.alibaba.fastjson.JSON;
 
 public class ClientNewRechargeRequest {
@@ -14,9 +16,14 @@ public class ClientNewRechargeRequest {
 	 */
 	private String partnerId;
 	
-	// uid 否 String 渠道的用户编号
-	private String uid;
-
+	// 支付渠道id
+	private String channelId;
+	
+	// 请求创建订单的客户端ip
+	private String deviceIp;
+	
+	private String channelPartnerId;
+	
 	/*
 	 * currencyName 否 String 支付货币名称
 	 */
@@ -68,12 +75,12 @@ public class ClientNewRechargeRequest {
 		this.partnerId = partnerId;
 	}
 
-	public String getUid() {
-		return uid;
+	public String getChannelId() {
+		return channelId;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
 	}
 
 	public String getCurrencyName() {
@@ -130,6 +137,22 @@ public class ClientNewRechargeRequest {
 
 	public void setChannelTradeNo(String channelTradeNo) {
 		this.channelTradeNo = channelTradeNo;
+	}
+	
+	public String getDeviceIp() {
+		return deviceIp;
+	}
+
+	public void setDeviceIp(String deviceIp) {
+		this.deviceIp = deviceIp;
+	}
+
+	public String getChannelPartnerId() {
+		return channelPartnerId;
+	}
+
+	public void setChannelPartnerId(String channelPartnerId) {
+		this.channelPartnerId = channelPartnerId;
 	}
 
 	@Override

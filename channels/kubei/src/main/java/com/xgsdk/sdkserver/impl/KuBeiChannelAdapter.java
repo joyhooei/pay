@@ -80,8 +80,8 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
     	kudongPay.setN(NOTIFY_URL);
     	kudongPay.setP(PID);
     	kudongPay.setP1(MACID);
-    	kudongPay.setP2("test" + System.currentTimeMillis());
-    	kudongPay.setP3("1");
+    	kudongPay.setP2(request.getTradeNo());
+    	kudongPay.setP3(request.getPaidAmount());
     	
     	String doGet = Util.doGet("http://demo.counect.com/vcupe/getPay.do?" + kudongPay.genURLParameter(KEY));
     	data.setUrl(doGet);

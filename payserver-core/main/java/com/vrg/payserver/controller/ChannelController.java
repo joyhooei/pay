@@ -1,10 +1,12 @@
 package com.vrg.payserver.controller;
 
 import java.text.MessageFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,30 +17,170 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.vrg.payserver.ChannelService;
+import com.vrg.payserver.RechargeRequestLogService;
+import com.vrg.payserver.dao.RechargeRecordStatusMapper;
 import com.vrg.payserver.repository.ChannelRepository;
+import com.vrg.payserver.service.GameClientService;
 import com.vrg.payserver.service.IChannel;
 import com.vrg.payserver.service.IChannelAdapter;
 import com.vrg.payserver.service.ParamRepository;
+import com.vrg.payserver.service.vo.ClientNewRechargeRequest;
+import com.vrg.payserver.service.vo.ClientNewRechargeResponse;
+import com.vrg.payserver.service.vo.CreateChannelOrderRequest;
+import com.vrg.payserver.service.vo.CreateChannelOrderResponse;
+import com.vrg.payserver.service.vo.CreateChannelOrderResponseData;
+import com.vrg.payserver.service.vo.RechargeRequestLog;
+import com.vrg.payserver.util.ErrorCode;
 import com.vrg.payserver.util.IPUtils;
 import com.vrg.payserver.util.Log;
+import com.vrg.payserver.util.RequestType;
+import com.vrg.payserver.util.SignCore;
 import com.vrg.payserver.util.Util;
 import com.vrg.payserver.util.logging.LogAction;
-
 
 @RestController
 public class ChannelController {
 
 	@Autowired
 	private ChannelRepository channelRepository;
-//	@Autowired
-//	private RechargeRequestLogService rechargeRequestLogService;
+	
+	@Autowired
+	private RechargeRequestLogService rechargeRequestLogService;
 	
 	@Autowired
 	private ChannelService channelService;
 	
 	@Autowired
 	private ParamRepository paramRepository;
+	
+	@Autowired
+	private GameClientService gameClientService;
+	
+	@Autowired
+	private RechargeRecordStatusMapper rechargeRecordStatusMapper;
+	
+	@RequestMapping(value = "/pay/create-order/{channelId}/{partnerId}")
+	public ResponseEntity<ClientNewRechargeResponse> createOrder(HttpServletRequest hRequest, @PathVariable String channelId, @PathVariable String partnerId) {
+		Date requestTime = new Date();
+//		XGLog.startAction(XGLogAction.CREATE_ORDER, xgAppId, channelId, IPUtils.getRemoteAddr(hRequest), null);
+		ClientNewRechargeResponse response = null;
+		ClientNewRechargeRequest request = null;
+		try {
+			request = Util.parseRequestParameter(hRequest, ClientNewRechargeRequest.class);
+			request.setPartnerId(partnerId);
+			request.setChannelId(channelId);
+//			XGLog.supplementBizInfo(null, null, request.getPlanId(), null, request.getUid(), null, null, null, request.getProductId(), request.getProductName(), null, null, null, request.getRoleId(), request.getRoleName());
+//			XGLog.changeLogContextTypeToAppErr();
+			
+			// check sign
+//			XGLog.enterStep("验签");
+			String type = RequestType.CREATE_ORDER;
+			if (!StringUtils.equalsIgnoreCase(type, request.getType()) || !gameClientService.verifySign(request, request.getSign(), request.getPartnerId(), channelId)) {
+				response = gameClientService.createNewRechargeResponse(request);
+				response.setCode(ErrorCode.ERR_SIGN);
+				response.setMsg(ErrorCode.ERR_SIGN_MSG);
+				return ResponseEntity.ok(response);
+			}
 
+			// 创建订单
+//			XGLog.enterStep("创建订单");
+			request.setDeviceIp(IPUtils.getRemoteAddr(hRequest));
+			response = gameClientService.createOrder(request);
+			if (!StringUtils.equals(ErrorCode.SUCCESS, response.getCode())) {
+//				XGLog.supplementMessage("createOrder failed, channelId = {}, xgAppId = {}, request data = {}, response data = {}.", channelId, xgAppId, request, response);				
+				return ResponseEntity.ok(response);
+			}
+
+			// create channel order
+//			XGLog.enterStep("创建渠道订单");
+			request.setTradeNo(response.getData().getTradeNo());
+//			XGLog.supplementBizInfo(null, null, response.getData().getPlanId(), null, response.getData().getUid(), null, response.getData().getTradeNo(), null, null, null, response.getData().getSign(), null, null, null, null);
+			CreateChannelOrderResponse createChannelResponse = this.createChannelOrder(request);
+			if (createChannelResponse != null && !StringUtils.equalsIgnoreCase(createChannelResponse.getCode(), ErrorCode.SUCCESS)) {
+				// 渠道订单创建失败
+//			  XGLog.supplementMessage("create channel order failed, channelId = {}, xgAppId = {}, request data = {}, response data = {}.", channelId, xgAppId, request, createChannelResponse);				
+				response = new ClientNewRechargeResponse();
+				response.setCode(createChannelResponse.getCode());
+				response.setMsg(createChannelResponse.getMsg());
+				return ResponseEntity.ok(response);
+			}
+
+			if (createChannelResponse != null && createChannelResponse.getData() != null) {
+				// 获取渠道创建的订单号
+				CreateChannelOrderResponseData channelResponseData = createChannelResponse.getData();
+				String channelTradeNo = channelResponseData.getChannelTradeNo();
+//				XGLog.supplementBizInfo(null, null, null, null, null, null, null, channelTradeNo, null, null, null, null, null, null, null);
+				if (!StringUtils.isEmpty(channelTradeNo)) {
+					request.setChannelTradeNo(channelTradeNo);
+					rechargeRecordStatusMapper.updateChannelTradeNoByTradeNo(response.getData().getTradeNo(), channelTradeNo);
+				}
+
+				response.getData().setChannelTradeNo(channelTradeNo);
+				response.getData().setNonceStr(channelResponseData.getNonceStr());
+				response.getData().setPrepayId(channelResponseData.getPrepayId());
+				response.getData().setSubmitTime(channelResponseData.getSubmitTime());
+				response.getData().setTokenUrl(channelResponseData.getTokenUrl());
+			}
+			// 补齐签名
+		  response.getData().setSign(SignCore.xgSign(response.getData(), SignCore.SIGN_FIELD_NAME, paramRepository.getClientAppKey(request.getPartnerId())));
+//			XGLog.changeLogContextTypeToInfo();
+			return ResponseEntity.ok(response);
+		} catch (Throwable t) {
+			response = gameClientService.createNewRechargeResponse(request);
+			response.setCode(ErrorCode.ERR_SYSTEM);
+			response.setMsg(t.getMessage());
+//			XGLog.endActionWithError(XGLogAction.CREATE_ORDER, t, request, response);
+			return ResponseEntity.ok(response);
+		}
+	}
+	
+	private CreateChannelOrderResponse createChannelOrder(ClientNewRechargeRequest cRequest) {
+		// 获取渠道版本
+		String channelId = cRequest.getChannelId();
+
+		// 获取渠道实现对象
+		IChannel channelImpl = channelRepository.getChannelImpl(channelId);
+		// 获取渠道返回值，并返回
+		if (channelImpl != null) {
+			CreateChannelOrderRequest request = new CreateChannelOrderRequest();
+			BeanUtils.copyProperties(cRequest, request);
+			Date requestTime = new Date();
+			CreateChannelOrderResponse response = channelImpl.createChannelOrder(request);
+			if (response != null) {
+				this.saveCreateChannelOrderLog(request, response, requestTime);
+			}
+			return response;
+		}
+		return null;
+	}
+
+	/**
+	 * 保存会话验证请求
+	 *
+	 * @param request
+	 * @param response
+	 * @param requestTime
+	 * @param requestValue
+	 * @param responseValue
+	 */
+	private void saveCreateChannelOrderLog(CreateChannelOrderRequest request, CreateChannelOrderResponse response, Date requestTime) {
+		if (response == null) {
+			response = new CreateChannelOrderResponse();
+		}
+		RechargeRequestLog requestLog = new RechargeRequestLog();
+		requestLog.setChannelId(request.getChannelId());
+		requestLog.setChannelTradeNo("");
+		requestLog.setEventType(RequestType.CREATE_CHANNEL_ORDER);
+		requestLog.setRequestIp("127.0.0.1");
+		requestLog.setRequestTime(requestTime);
+		requestLog.setTradeNo("");
+		requestLog.setPartnerId(request.getPartnerId());
+		requestLog.setRequestValue(response.getRequestValue());
+		requestLog.setResponseValue(response.getResponseValue());
+		requestLog.setResponseTime(new Date());
+		rechargeRequestLogService.push(requestLog);
+	}
+	
 	@RequestMapping(value = "/pay-notify/{channelId}/{partnerId}")
 	public ResponseEntity<?> notifyRechargeResult(HttpServletRequest originalRequest, @PathVariable String channelId, @PathVariable String partnerId) {
 		String errorMessage = "";

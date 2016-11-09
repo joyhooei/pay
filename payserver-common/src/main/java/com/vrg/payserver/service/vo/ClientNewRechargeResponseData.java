@@ -10,16 +10,12 @@ import com.alibaba.fastjson.JSON;
  *
  */
 public class ClientNewRechargeResponseData {
-	// channelAppId 否 String 渠道分配的游戏编号
-	private String channelAppId;
-	// xgAppId 是 String Xgsdk分配的游戏编号
-	private String xgAppId;
+	// channelPartnerId 否 String 渠道分配唯一标识
+	private String channelPartnerId;
+	// partnerId 是 String vrg的唯一标识
+	private String partnerId;
 	// channelId 是 String 运营渠道编号
 	private String channelId;
-	// planId 否 String 发布计划编号
-	private String planId;
-	// uid 是 String 渠道用户编号
-	private String uid;
 	// tradeNo 是 String 订单号
 	private String tradeNo;
 	// channelTradeNo 否 String 渠道订单号
@@ -30,8 +26,6 @@ public class ClientNewRechargeResponseData {
 	private String nonceStr;
 	// customInfo 否 String 自定义字段，原样返回
 	private String customInfo;
-	// gameTradeNo 否 String 游戏侧订单号
-	private String gameTradeNo;
 	// tokenUrl 否 String
 	// 目前用于腾讯渠道应用侧在唤起购买SDK前，应用后台支付服务器下的订单Url，也就是调用buy_goods_m支付Api时返回的url_params的值
 	private String tokenUrl;
@@ -43,36 +37,6 @@ public class ClientNewRechargeResponseData {
 	@Override
 	public String toString() {
 		return JSON.toJSONString(this);
-	}
-
-	/**
-	 * @return the channelAppId
-	 */
-	public String getChannelAppId() {
-		return channelAppId;
-	}
-
-	/**
-	 * @param channelAppId
-	 *            the channelAppId to set
-	 */
-	public void setChannelAppId(String channelAppId) {
-		this.channelAppId = channelAppId;
-	}
-
-	/**
-	 * @return the xgAppId
-	 */
-	public String getXgAppId() {
-		return xgAppId;
-	}
-
-	/**
-	 * @param xgAppId
-	 *            the xgAppId to set
-	 */
-	public void setXgAppId(String xgAppId) {
-		this.xgAppId = xgAppId;
 	}
 
 	/**
@@ -88,21 +52,6 @@ public class ClientNewRechargeResponseData {
 	 */
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
-	}
-
-	/**
-	 * @return the uid
-	 */
-	public String getUid() {
-		return uid;
-	}
-
-	/**
-	 * @param uid
-	 *            the uid to set
-	 */
-	public void setUid(String uid) {
-		this.uid = uid;
 	}
 
 	/**
@@ -181,21 +130,6 @@ public class ClientNewRechargeResponseData {
 	}
 
 	/**
-	 * @return the gameTradeNo
-	 */
-	public String getGameTradeNo() {
-		return gameTradeNo;
-	}
-
-	/**
-	 * @param gameTradeNo
-	 *            the gameTradeNo to set
-	 */
-	public void setGameTradeNo(String gameTradeNo) {
-		this.gameTradeNo = gameTradeNo;
-	}
-
-	/**
 	 * @return the tokenUrl
 	 */
 	public String getTokenUrl() {
@@ -240,19 +174,20 @@ public class ClientNewRechargeResponseData {
 		this.sign = sign;
 	}
 
-	/**
-	 * @return the planId
-	 */
-	public String getPlanId() {
-		return planId;
+	public String getChannelPartnerId() {
+		return channelPartnerId;
 	}
 
-	/**
-	 * @param planId
-	 *            the planId to set
-	 */
-	public void setPlanId(String planId) {
-		this.planId = planId;
+	public void setChannelPartnerId(String channelPartnerId) {
+		this.channelPartnerId = channelPartnerId;
+	}
+
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
 	}
 
 }

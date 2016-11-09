@@ -94,4 +94,17 @@
 		from recharge_record_status
 		where channel_trade_no= #{0} and channel_id=#{1}
 	</select>
+	
+	<select id="getTradeNoSegment" resultType="java.lang.Long">
+		select nextval('TRADE_NO')
+	</select>	
+	
+	<select id="getChargeLogId" resultType="java.lang.Long">
+		select nextval('TRADE_NO')
+	</select>
+	
+	<update id="updateChannelTradeNoByTradeNo">
+		update recharge_record_status set channel_trade_no=#{1,jdbcType=VARCHAR} where trade_no = #{0}
+	</update>
+
 </mapper>

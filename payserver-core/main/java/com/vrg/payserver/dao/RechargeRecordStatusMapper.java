@@ -15,4 +15,10 @@ public interface RechargeRecordStatusMapper {
 	int update(RechargeRecordBase rechargeRecordStatus);
 	
 	RechargeRecordBase queryByChannelTradeNo(String channelTradeNo, String channelId);
+	
+	int updateChannelTradeNoByTradeNo(String tradeNo, String channelTradeNo);
+	
+	long getTradeNoSegment();
+	
+	long getChargeLogId();
 }

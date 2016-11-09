@@ -4,18 +4,17 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
     }
-}
-
-// In this section you declare the dependencies for your production and test code
-dependencies {
-	
+    
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.4.1'
+    }
 }
 
 allprojects {
     apply plugin: 'idea'
     apply plugin: 'maven'
     apply plugin: 'eclipse'
-    group = 'com.cupe.server'
+    group = 'com.vrg.payserver'
     version = '2.0'
 }
 
@@ -47,6 +46,37 @@ subprojects{
     jar {
         manifest {
             
+        }
+    }
+}
+
+configure(subprojects.findAll{it.name.startsWith('channel')}){
+    [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+    eclipse{
+        project.name="payserver-"+project.name.replace("/","-")
+    }
+
+    dependencies {
+        compile(
+            project(':payserver-common'),
+            fileTree(dir: 'libs', include: '*.jar')
+        )
+        testCompile (
+            'junit:junit:4.11',
+            'org.powermock:powermock-core:1.5.6',
+            'org.powermock:powermock-module-junit4:1.5.6',
+            'org.powermock:powermock-api-mockito:1.5.6',
+            'ch.qos.logback:logback-classic:1.1.2'
+        )
+    }
+
+    jar {
+        destinationDir = new File("${rootProject.projectDir}/payserver-core")
+        from {
+            fileTree(dir: "${project.projectDir}/libs", include: '*.jar').collect {
+                it.isDirectory() ? it : zipTree(it) 
+            } 
         }
     }
 }

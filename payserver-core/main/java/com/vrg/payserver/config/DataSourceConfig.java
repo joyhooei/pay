@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -64,6 +65,8 @@ public class DataSourceConfig {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         sqlSessionFactoryBean.setTypeAliasesPackage("com.vrg.payserver.dao.model");
         sqlSessionFactoryBean.setConfigLocation(resolver.getResource(MYBATIS_CONFIG_PATH));
+		Resource[] resources = new PathMatchingResourcePatternResolver().getResources("classpath:com/vrg/payserver/mapper/*Mapper.xml");
+		sqlSessionFactoryBean.setMapperLocations(resources);
         return sqlSessionFactoryBean.getObject();
     }
 

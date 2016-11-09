@@ -8,17 +8,16 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.vrg.payserver.repository.ChannelParamRepository;
+import com.vrg.payserver.repository.PartnerRespository;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 @Service
 public class ParamRepository {
 
 	@Autowired
 	private ChannelParamRepository channelParamRepository;
-
+	
+	@Autowired
+	private PartnerRespository partnerRespository;
 
 	/**
 	 * 获取支付渠道参数
@@ -45,6 +44,6 @@ public class ParamRepository {
 	 * @return
 	 */
 	public String getServerSecret(String partnerId) {
-		return "";
+		return partnerRespository.getSecretKey(partnerId);
 	}
 }

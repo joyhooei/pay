@@ -21,10 +21,6 @@ import com.vrg.payserver.service.IChannelFactory;
 import com.vrg.payserver.service.IServerCoreService;
 import com.vrg.payserver.util.Log;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 @Service
 public class ChannelRepository {
     public static final String CLASS_PATTERN = "com.xgsdk.sdkserver.impl.ChannelFactory";
