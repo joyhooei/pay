@@ -43,6 +43,7 @@ payserver-core/flyway/.project
 payserver-core/flyway/.settings/
 
 .gradle/
+gradle
 .idea/
 .project
 .classpath
