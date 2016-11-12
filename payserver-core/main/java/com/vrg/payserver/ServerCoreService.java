@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +87,31 @@ public class ServerCoreService implements IServerCoreService {
 
 	@Override
 	public RechargeRecordBase getRechargeRecordByTradeNo(String tradeNo) {
-		// TODO Auto-generated method stub
-		return null;
+		if (StringUtils.isEmpty(tradeNo)) {
+			return null;
+		}
+		RechargeRecordBase rechargeRecordBase = rechargeRecordStatusMapper.queryByTradeNo(tradeNo);
+		if (rechargeRecordBase == null) {
+			RechargeRecordBase conditions = new RechargeRecordBase();
+			conditions.setTradeNo(tradeNo);
+			rechargeRecordBase = rechargeLogMapper.queryByTradeNo(conditions);
+			// TOTO 订单回捞流程需要考虑
+//			if (rechargeRecordBase == null) {
+//				// 查询作废日志表
+//				rechargeRecordBase = rechargeFailLogMapper.queryByTradeNo(conditions);
+//				if (rechargeRecordBase != null) {
+//					// 如果存在，则执行回捞
+//					rechargeRecordStatusMapper.createFromFailLog(conditions);
+//					rechargeFailLogMapper.delete(conditions);
+//				} else {
+//					// 如果不存在，则返回错误
+//					return null;
+//				}
+//			} else {
+//				return rechargeRecordBase;
+//			}
+		}
+		return rechargeRecordBase;
 	}
 
 	@Override
@@ -103,9 +127,26 @@ public class ServerCoreService implements IServerCoreService {
 	}
 
 	@Override
-	public boolean checkChannelTradeNo(String tradeNo, String channelTradeNo, String channelId, Date paidTime) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean checkChannelTradeNo(String tradeNo, String channelTradeNo, String originalChannelTradeNo, String channelId, Date paidTime) {
+		if (StringUtils.isEmpty(channelTradeNo)) {
+			channelTradeNo = tradeNo;
+		}
+//		RechargeChannelTradeNo rechargeChannelTradeNo = new RechargeChannelTradeNo();
+//		rechargeChannelTradeNo.setTradeNo(tradeNo);
+//		rechargeChannelTradeNo.setChannelTradeNo(channelTradeNo);
+//		rechargeChannelTradeNo.setOriginalChannelTradeNo(originalChannelTradeNo);
+//		rechargeChannelTradeNo.setChannelId(channelId);
+//		if (paidTime != null) {
+//			rechargeChannelTradeNo.setPaidTime(paidTime);
+//		}
+//		try {
+//			rechargeChannelTradeNoMapper.create(rechargeChannelTradeNo);
+//			return true;
+//		} catch (Throwable t) {
+//			String dbTradeNo = rechargeChannelTradeNoMapper.queryTradeNo(rechargeChannelTradeNo);
+//			return StringUtils.equals(dbTradeNo, tradeNo);
+//		}
+		return true;
 	}
 
 	@Override

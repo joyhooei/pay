@@ -39,7 +39,7 @@ public interface IServerCoreService {
 	 * @param channelId
 	 * @return
 	 */
-	boolean checkChannelTradeNo(String tradeNo, String channelTradeNo, String channelId, Date paidTime);
+	boolean checkChannelTradeNo(String tradeNo, String channelTradeNo, String originalChannelTradeNo, String channelId, Date paidTime);
 
 	void onPayException(ChannelNotifyRequest xgRequest);
 

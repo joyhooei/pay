@@ -21,10 +21,12 @@ import com.vrg.payserver.service.vo.RechargeRecordBase;
 import com.vrg.payserver.service.vo.RechargeRequestLog;
 import com.vrg.payserver.service.vo.VerifyChannelOrderRequest;
 import com.vrg.payserver.service.vo.VerifyChannelOrderResponse;
+import com.vrg.payserver.util.DateUtil;
 import com.vrg.payserver.util.ErrorCode;
 import com.vrg.payserver.util.IPUtils;
 import com.vrg.payserver.util.Log;
 import com.vrg.payserver.util.RequestType;
+import com.vrg.payserver.util.Util;
 
 public final class DefaultChannelService implements IChannel {
 	public static final String URL_PATTERN = "{0}://{1}:{2}{3}";
@@ -227,7 +229,7 @@ public final class DefaultChannelService implements IChannel {
 
 			// 渠道订单号排重
 			Log.enterStep("渠道订单号排重");
-			if (!serverCoreService.checkChannelTradeNo(rechargeRecord.getTradeNo(), requestChannelTradeNo, channelId, request.getPayNoticeRequestData().getPaidTime())) {
+			if (!serverCoreService.checkChannelTradeNo(rechargeRecord.getTradeNo(), requestChannelTradeNo, channelId, null, request.getPayNoticeRequestData().getPaidTime())) {
 				request.setStateCode(ChannelRequest.ERR_EXCEPTION);
 				request.setStateMsg(MessageFormat.format("It is repeat request. ChannelTradeNo:[{0}].TradeNo:[{1}].", requestChannelTradeNo, rechargeRecord.getTradeNo()));
 				// 渠道订单号排重失败，返回错误
@@ -415,79 +417,42 @@ public final class DefaultChannelService implements IChannel {
 		}
 	}
 
-	private boolean checkSame(RechargeRecordBase rechargeRecord, ChannelRequest xgRequest, ChannelData xgRequestData) {
-//		// 验证请求参数的一致性
-//		// private String customInfo; // 渠道返回的用户自定义字段是否和订单号一致，为空则说明渠道不支持自定义字段
-//		if (StringUtils.isNotEmpty(xgRequestData.getCustomInfo()) && !StringUtils.equals(xgRequestData.getTradeNo(), xgRequestData.getCustomInfo())) {
-//			// 设置错误码
-//			xgRequest.setStateCode(ChannelNotifyRequest.ERR_CHANNEL_TRADE_NO_NOTSAME);
-//			xgRequest.setStateMsg(MessageFormat.format("Channel custom info[{0}] of the order[{1}] is not match with request information.", xgRequestData.getCustomInfo(), rechargeRecord.getTradeNo()));
-//			return false;
-//		}
-//		// private String channelAppId; // 渠道分配的游戏编号，为空则不做校验
-//		if (!StringUtils.isEmpty(xgRequestData.getChannelAppId()) && !StringUtils.isEmpty(rechargeRecord.getChannelAppId()) && !StringUtils.equals(xgRequestData.getChannelAppId(), rechargeRecord.getChannelAppId())) {
-//			// 设置错误码
-//			xgRequest.setStateCode(ChannelNotifyRequest.ERR_CHANNEL_APP_ID_NOTSAME);
-//			xgRequest.setStateMsg(MessageFormat.format("Channel app id[{0}] of the order[{1}] is not match with request information.", xgRequestData.getChannelAppId(), rechargeRecord.getTradeNo()));
-//			return false;
-//		}
-//		// ios_icantw + xxx   <->  icantw_xxx
-//		// icantw + xxx <-> icantw_xxx
-//		// private String uid; // 渠道分配的用户编号，为空则不做校验
-//		String uidPrefix = StringUtils.replace(rechargeRecord.getChannelId(), "ios_", "");
-//		if (!StringUtils.isEmpty(xgRequestData.getUid()) && !StringUtils.isEmpty(rechargeRecord.getUid()) && !StringUtils.equalsIgnoreCase(xgRequestData.getUid(), rechargeRecord.getUid())
-//			&& !StringUtils.equalsIgnoreCase(Util.getXgUid(rechargeRecord.getChannelId(), xgRequestData.getUid()), rechargeRecord.getUid())
-//			&& !StringUtils.equalsIgnoreCase(Util.getXgUid(rechargeRecord.getChannelId(), rechargeRecord.getUid()), xgRequestData.getUid())
-//			&& !StringUtils.equalsIgnoreCase(uidPrefix + "__" + xgRequestData.getUid(), rechargeRecord.getUid())) {
-//			// 设置错误码
-//			xgRequest.setStateCode(ChannelNotifyRequest.ERR_UID_NOTSAME);
-//			xgRequest.setStateMsg(MessageFormat.format("Uid[{0}] of the order[{1}] is not match with request information.", xgRequestData.getUid(), rechargeRecord.getTradeNo()));
-//			return false;
-//		}
-//		// private Date paidTime; // 订单支付时间，和xg订单中的创建时间相差不能超过一天
-//		if (xgRequestData.getPaidTime() != null && rechargeRecord.getCreateTime() != null && !DateUtil.withinSevenDay(rechargeRecord.getCreateTime(), xgRequestData.getPaidTime())) {
-//			// 设置错误码
-//			xgRequest.setStateCode(ChannelNotifyRequest.ERR_PAID_TIME_OUT);
-//			xgRequest.setStateMsg(MessageFormat.format("The start time[{0}] of the request is timeout 7 day with the create time[{1}] of the order[{2}].", xgRequestData.getPaidTime(),
-//				rechargeRecord.getCreateTime(),
-//				rechargeRecord.getTradeNo()));
-//			return false;
-//		}
-//		// private String productId; // 商品编号，为空则不做校验
-//		if (!Util.containsTarget(serverCoreService.getProductExtValueByPlanIdKey(Integer.parseInt(rechargeRecord.getPlanId()), NOT_CHECK_PRODUCT_ID), rechargeRecord.getChannelId())) {
-//			if (!StringUtils.isEmpty(xgRequestData.getProductId()) && !StringUtils.isEmpty(rechargeRecord.getProductId()) && !StringUtils.equals(xgRequestData.getProductId(), rechargeRecord.getProductId())) {
-//				// 设置错误码
-//				xgRequest.setStateCode(ChannelNotifyRequest.ERR_PRODUCT_ID_NOTSAME);
-//				xgRequest.setStateMsg(MessageFormat.format("Product id[{0}] of the order[{1}] is not match with request information.", xgRequestData.getProductId(), rechargeRecord.getTradeNo()));
-//				return false;
-//			}
-//		}
-//		// private String productName; // 商品名称，为空则不做校验
-//		if (!StringUtils.isEmpty(xgRequestData.getProductName()) && !StringUtils.isEmpty(rechargeRecord.getProductName()) && !StringUtils.equals(xgRequestData.getProductName(), rechargeRecord.getProductName())) {
-//			// 设置错误码
-//			xgRequest.setStateCode(ChannelNotifyRequest.ERR_PRODUCT_NAME_NOTSAME);
-//			xgRequest.setStateMsg(MessageFormat.format("Product name[{0}] of the order[{1}] is not match with request information.", xgRequestData.getProductName(), rechargeRecord.getTradeNo()));
-//			return false;
-//		}
-//		// private int productQuantity = -1; // 商品数量，小于等于0则不做校验
-//		if (!Util.containsTarget(serverCoreService.getProductExtValueByPlanIdKey(Integer.parseInt(rechargeRecord.getPlanId()), NOT_CHECK_PRODUCT_QUANTITY), rechargeRecord.getChannelId())) {
-//			if (xgRequestData.getProductQuantity() > 0 && rechargeRecord.getProductQuantity() > 0 && (xgRequestData.getProductQuantity() != rechargeRecord.getProductQuantity())) {
-//				// 设置错误码
-//				xgRequest.setStateCode(ChannelNotifyRequest.ERR_PRODUCT_QUANTITY_NOTSAME);
-//				xgRequest.setStateMsg(
-//					MessageFormat.format("Product quantity[{0}] of the order[{1}] is not match with request information.", xgRequestData.getProductQuantity(), rechargeRecord.getTradeNo()));
-//				return false;
-//			}
-//		}
-//		// private int paidAmount = -1;
-//		if (!Util.containsTarget(serverCoreService.getProductExtValueByPlanIdKey(Integer.parseInt(rechargeRecord.getPlanId()), NOT_CHECK_PAID_AMOUNT), rechargeRecord.getChannelId())) {
-//			if (xgRequestData.getPaidAmount() >= 0 && rechargeRecord.getPaidAmount() >= 0 && (xgRequestData.getPaidAmount() < rechargeRecord.getPaidAmount())) {
-//				// 设置错误码
-//				xgRequest.setStateCode(ChannelNotifyRequest.ERR_PAID_AMOUNT_NOTSAME);
-//				xgRequest.setStateMsg(MessageFormat.format("channel notify amount[{0}] of the order[{1}] is not match with order information created by xg.", xgRequestData.getPaidAmount(), rechargeRecord.getTradeNo()));
-//				return false;
-//			}
-//		}
+	private boolean checkSame(RechargeRecordBase rechargeRecord, ChannelRequest channelRequest, ChannelData requestData) {
+		// 验证请求参数的一致性
+		// private String customInfo; // 渠道返回的用户自定义字段是否和订单号一致，为空则说明渠道不支持自定义字段
+		if (StringUtils.isNotEmpty(requestData.getCustomInfo()) && !StringUtils.equals(requestData.getTradeNo(), requestData.getCustomInfo())) {
+			// 设置错误码
+			channelRequest.setStateCode(ChannelNotifyRequest.ERR_CHANNEL_TRADE_NO_NOTSAME);
+			channelRequest.setStateMsg(MessageFormat.format("Channel custom info[{0}] of the order[{1}] is not match with request information.", requestData.getCustomInfo(), rechargeRecord.getTradeNo()));
+			return false;
+		}
+		
+		// private String partnerId; // 上渠道渠道的唯一标识
+		if (!StringUtils.isEmpty(requestData.getPartnerId()) && !StringUtils.isEmpty(rechargeRecord.getPartnerId()) && !StringUtils.equals(requestData.getPartnerId(), rechargeRecord.getPartnerId())) {
+			// 设置错误码
+			channelRequest.setStateCode(ChannelNotifyRequest.ERR_CHANNEL_APP_ID_NOTSAME);
+			channelRequest.setStateMsg(MessageFormat.format("PartnerId [{0}] of the order[{1}] is not match with request information.", requestData.getPartnerId(), rechargeRecord.getTradeNo()));
+			return false;
+		}
+		
+		// private Date paidTime; // 订单支付时间，和xg订单中的创建时间相差不能超过一天
+		if (requestData.getPaidTime() != null && rechargeRecord.getCreateTime() != null && !DateUtil.withinSevenDay(rechargeRecord.getCreateTime(), requestData.getPaidTime())) {
+			// 设置错误码
+			channelRequest.setStateCode(ChannelNotifyRequest.ERR_PAID_TIME_OUT);
+			channelRequest.setStateMsg(MessageFormat.format("The start time[{0}] of the request is timeout 7 day with the create time[{1}] of the order[{2}].", requestData.getPaidTime(),
+				rechargeRecord.getCreateTime(),
+				rechargeRecord.getTradeNo()));
+			return false;
+		}
+		
+		// private int paidAmount = -1;
+		if (requestData.getPaidAmount() >= 0 && rechargeRecord.getPaidAmount() >= 0 && (requestData.getPaidAmount() < rechargeRecord.getPaidAmount())) {
+			// 设置错误码
+			channelRequest.setStateCode(ChannelNotifyRequest.ERR_PAID_AMOUNT_NOTSAME);
+			channelRequest.setStateMsg(MessageFormat.format("channel notify amount[{0}] of the order[{1}] is not match with order information created by vrg.", requestData.getPaidAmount(), rechargeRecord.getTradeNo()));
+			return false;
+		}
+
 		return true;
 	}
 

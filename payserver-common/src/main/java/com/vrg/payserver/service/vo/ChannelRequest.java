@@ -3,6 +3,8 @@
  */
 package com.vrg.payserver.service.vo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.vrg.payserver.util.ErrorCode;
 
@@ -117,47 +119,20 @@ public class ChannelRequest {
 	}
 
 	public void putChannelData(ChannelData channelData) {
-//		this.stateCode = channelData.getStateCode();
-//		this.stateMsg = channelData.getStateMsg();
-//		// private String tradeNo; // 部分渠道通过XG订单号回调
-//		if (!StringUtils.isEmpty(channelData.getTradeNo())) {
-//			this.tradeNo = channelData.getTradeNo();
-//		}
-//		// private String channelTradeNo; // 部分渠道通过渠道订单号回调，通常会要求在创建订单时要求先创建渠道订单号
-//		if (!StringUtils.isEmpty(channelData.getChannelTradeNo())) {
-//			this.channelTradeNo = channelData.getChannelTradeNo();
-//		}
-//		// private String channelAppId; // 渠道分配的游戏编号，为空则不做校验
-//		// private String uid; // 渠道分配的用户编号，为空则不做校验
-//		// private Date paidTime; // 订单支付时间，和xg订单中的创建时间相差不能超过一天
-//		// private String productId; // 商品编号，为空则不做校验
-//		// private String productName; // 商品名称，为空则不做校验
-//		// private int productQuantity = -1; // 商品数量，小于等于0则不做校验
-//		// private int paidAmount = -1; // 支付金额，单位为分
-//		// private String payStatus = PAY_STATUS_FAIL;
-//		if (!StringUtils.isEmpty(channelData.getPayStatus())) {
-//			this.payStatus = channelData.getPayStatus();
-//		}
-//		// private String chargeChannelId;
-//		if (!StringUtils.isEmpty(channelData.getChargeChannelId())) {
-//			this.chargeChannelId = channelData.getChargeChannelId();
-//		}
-//		// private String chargeChannelType;
-//		if (!StringUtils.isEmpty(channelData.getChargeChannelType())) {
-//			this.chargeChannelType = channelData.getChargeChannelType();
-//		}
-//		// private String chargeChannelInst;
-//		if (!StringUtils.isEmpty(channelData.getChargeChannelInst())) {
-//			this.chargeChannelInst = channelData.getChargeChannelInst();
-//		}
-//		// private int voucherAmount = -1;
-//		if (channelData.getVoucherAmount() > 0) {
-//			this.voucherAmount = channelData.getVoucherAmount();
-//		}
-//		// private int channelBonusAmount = -1;
-//		if (channelData.getChannelBonusAmount() > 0) {
-//			this.channelBonusAmount = channelData.getChannelBonusAmount();
-//		}
+		this.stateCode = channelData.getStateCode();
+		this.stateMsg = channelData.getStateMsg();
+		
+		if (!StringUtils.isEmpty(channelData.getTradeNo())) {
+			this.tradeNo = channelData.getTradeNo();
+		}
+
+		if (!StringUtils.isEmpty(channelData.getChannelTradeNo())) {
+			this.channelTradeNo = channelData.getChannelTradeNo();
+		}
+
+		if (!StringUtils.isEmpty(channelData.getPayStatus())) {
+			this.payStatus = channelData.getPayStatus();
+		}
 	}
 
 	/**
