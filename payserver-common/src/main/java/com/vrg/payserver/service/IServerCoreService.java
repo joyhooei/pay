@@ -84,7 +84,9 @@ public interface IServerCoreService {
 	 * 记录异常请求日志
 	 */
 	void saveRequestException(RechargeRequestException rechargeRequestException);
-
+	
+	void saveRequestException(ChannelRequest channelRequest, RechargeRecordBase rechargeRecord);
+	
 	/**
 	 * 取消订单
 	 *

@@ -11,6 +11,7 @@ import com.vrg.payserver.service.IChannelAdapter;
 import com.vrg.payserver.service.IServerCoreService;
 import com.vrg.payserver.service.SearchChannelOrderType;
 import com.vrg.payserver.service.vo.ChannelData;
+import com.vrg.payserver.service.vo.ChannelRequest;
 import com.vrg.payserver.service.vo.CreateChannelOrderRequest;
 import com.vrg.payserver.service.vo.CreateChannelOrderResponse;
 import com.vrg.payserver.service.vo.CreateChannelOrderResponseData;
@@ -97,8 +98,9 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
 		
 		JSONObject resultBody = JSON.parseObject(responseObj.getString("BODY"));
 		if (StringUtils.equals(resultBody.getString("s"), "1")) {
-			channelResponseData.setStateCode("0");
-			channelResponseData.setPayStatus("0");
+			channelResponseData.setStateCode(ErrorCode.SUCCESS);
+			channelResponseData.setPayStatus(ChannelRequest.PAY_STATUS_SUCCESS);
+			channelResponseData.setChannelTradeNo(resultBody.getString("p0"));
 			channelResponseData.setChannelId("kubei");
 			return SearchChannelOrderType.OK;
 		}

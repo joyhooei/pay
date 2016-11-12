@@ -25,11 +25,9 @@ public class RechargeRequestException {
 	// CHANNEL_TRADE_NO VARCHAR(64) 渠道订单号
 	private String channelTradeNo;
 	// XG_APP_ID VARCHAR2(64) XGSDK游戏编号
-	private String xgAppId;
+	private String partnerId;
 	// CHANNEL_ID VARCHAR2(32) 运营商编号
 	private String channelId;
-	// UID VARCHAR2(128) 渠道的用户编号
-	private String uid;
 	// DEVICE_ID VARCHAR2(100) 设备编号
 	private String deviceId;
 	// REQUEST_TIME DATE 请求发生时间
@@ -76,10 +74,6 @@ public class RechargeRequestException {
 	}
 
 	private static void parseFields(RechargeRequestException requestLog, JSONObject jsonObject) {
-		String accountId = jsonObject.getString("uid");
-		if (accountId != null) {
-			requestLog.setUid(accountId);
-		}
 		String channelId = jsonObject.getString("channelId");
 		if (channelId != null) {
 			requestLog.setChannelId(channelId);
@@ -96,9 +90,9 @@ public class RechargeRequestException {
 		if (eventType != null) {
 			requestLog.setEventType(eventType);
 		}
-		String xgAppId = jsonObject.getString("xgAppId");
-		if (xgAppId != null) {
-			requestLog.setXgAppId(xgAppId);
+		String partnerId = jsonObject.getString("partnerId");
+		if (partnerId != null) {
+			requestLog.setPartnerId(partnerId);
 		}
 		String tradeNo = jsonObject.getString("tradeNo");
 		if (tradeNo != null) {
@@ -183,21 +177,6 @@ public class RechargeRequestException {
 	}
 
 	/**
-	 * @return the xgAppId
-	 */
-	public String getXgAppId() {
-		return xgAppId;
-	}
-
-	/**
-	 * @param xgAppId
-	 *            the xgAppId to set
-	 */
-	public void setXgAppId(String xgAppId) {
-		this.xgAppId = xgAppId;
-	}
-
-	/**
 	 * @return the channelId
 	 */
 	public String getChannelId() {
@@ -225,21 +204,6 @@ public class RechargeRequestException {
 	 */
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the uid
-	 */
-	public String getUid() {
-		return uid;
-	}
-
-	/**
-	 * @param uid
-	 *            the uid to set
-	 */
-	public void setUid(String uid) {
-		this.uid = uid;
 	}
 
 	/**
@@ -385,7 +349,14 @@ public class RechargeRequestException {
 		this.remarks = remarks;
 	}
 
-	
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
+	}
+
 	public void setRequestValue(String requestValue) {
 		if (requestValue == null) {
 			return;

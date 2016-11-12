@@ -109,4 +109,7 @@
 		update recharge_record_status set channel_trade_no=#{1,jdbcType=VARCHAR} where trade_no = #{0}
 	</update>
 
+	<delete id="delete">
+		delete from recharge_record_status where charge_log_id=#{0}
+	</delete>
 </mapper>

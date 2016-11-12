@@ -131,30 +131,36 @@ public final class DefaultChannelService implements IChannel {
 
 			Log.enterStep("检查充值记录状态");
 			if (serverCoreService.checkRechargeRecordStatus(rechargeRecord.getStatus())) {
-				if (!StringUtils.equals(rechargeRecord.getChannelTradeNo(), request.getChannelTradeNo())) {
-					// 渠道查询，如果订单真实，则自动创建一个新的西瓜订单，并自动通知游戏；
-					// 如果渠道没有提供查询接口或查询失败，则自动创建一个新西瓜订单，但不自动通知游戏，由人工确定后再决定是否补单
-					// 以上2种情况都在订单的备注里边添加“多个渠道订单对应西瓜订单[原西瓜订单号]的补单”
-					String mulExceptionInfo = "此订单是由于渠道重复通知所创建，原始订单号[{0}]";
-					isMultipleChannelTradeNo = true;
-					ClientNewRechargeRequest newRechargeReq = new ClientNewRechargeRequest();
-					BeanUtils.copyProperties(rechargeRecord, newRechargeReq);
-//					newRechargeReq.setExceptionInfo(MessageFormat.format(mulExceptionInfo,rechargeRecord.getTradeNo()));
-					ClientNewRechargeResponse secondRecharegeRes = serverCoreService.createOrder(newRechargeReq);
-					String secondXGTradeNo = secondRecharegeRes.getData().getTradeNo();
-					// 如果xg订单号一致，但渠道订单号不一致，有可能是一个xg订单号对应多个渠道订单号的情况，先记录，后续人工跟进
-					saveMultipleChannelTradeNo(hRequest, channelId, partnerId, request, rechargeRecord, secondXGTradeNo);
-					rechargeRecord = serverCoreService.getRechargeRecordByTradeNo(secondXGTradeNo);
-					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应多个渠道订单号{1}，已记录到RECHARGE_MULTI_CHLNO表，需要由人工识别订单是否真实。", request.getTradeNo(), rechargeRecord.getChannelTradeNo() + "," + request.getChannelTradeNo()));
-				} else {
-					// 已收到过通知，返回成功
-					request.setStateCode(ChannelNotifyRequest.ERR_REPEAT);
-					request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
-					ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
-					responseString = responseEntity.getBody();
-//					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
-					return responseEntity;
-				}
+//				if (!StringUtils.equals(rechargeRecord.getChannelTradeNo(), request.getChannelTradeNo())) {
+//					// 渠道查询，如果订单真实，则自动创建一个新的西瓜订单，并自动通知游戏；
+//					// 如果渠道没有提供查询接口或查询失败，则自动创建一个新西瓜订单，但不自动通知游戏，由人工确定后再决定是否补单
+//					// 以上2种情况都在订单的备注里边添加“多个渠道订单对应西瓜订单[原西瓜订单号]的补单”
+//					String mulExceptionInfo = "此订单是由于渠道重复通知所创建，原始订单号[{0}]";
+//					isMultipleChannelTradeNo = true;
+//					ClientNewRechargeRequest newRechargeReq = new ClientNewRechargeRequest();
+//					BeanUtils.copyProperties(rechargeRecord, newRechargeReq);
+////					newRechargeReq.setExceptionInfo(MessageFormat.format(mulExceptionInfo,rechargeRecord.getTradeNo()));
+//					ClientNewRechargeResponse secondRecharegeRes = serverCoreService.createOrder(newRechargeReq);
+//					String secondXGTradeNo = secondRecharegeRes.getData().getTradeNo();
+//					// 如果xg订单号一致，但渠道订单号不一致，有可能是一个xg订单号对应多个渠道订单号的情况，先记录，后续人工跟进
+//					saveMultipleChannelTradeNo(hRequest, channelId, partnerId, request, rechargeRecord, secondXGTradeNo);
+//					rechargeRecord = serverCoreService.getRechargeRecordByTradeNo(secondXGTradeNo);
+//					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应多个渠道订单号{1}，已记录到RECHARGE_MULTI_CHLNO表，需要由人工识别订单是否真实。", request.getTradeNo(), rechargeRecord.getChannelTradeNo() + "," + request.getChannelTradeNo()));
+//				} else {
+//					// 已收到过通知，返回成功
+//					request.setStateCode(ChannelNotifyRequest.ERR_REPEAT);
+//					request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
+//					ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
+//					responseString = responseEntity.getBody();
+////					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
+//					return responseEntity;
+//				}
+				request.setStateCode(ChannelNotifyRequest.ERR_REPEAT);
+				request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
+				ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
+				responseString = responseEntity.getBody();
+//				Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
+				return responseEntity;
 
 			}
 
@@ -277,10 +283,7 @@ public final class DefaultChannelService implements IChannel {
 			if (StringUtils.isEmpty(tradeNo) && rechargeRecord != null) {
 				tradeNo = rechargeRecord.getTradeNo();
 			}
-//			String uid = payNoticeRequestData.getUid();
-//			if (StringUtils.isEmpty(uid) && rechargeRecord != null) {
-//				uid = rechargeRecord.getUid();
-//			}
+
 			RechargeRequestLog requestLog = new RechargeRequestLog();
 			requestLog.setChannelId(channelId);
 			requestLog.setChannelTradeNo(channelTradeNo);

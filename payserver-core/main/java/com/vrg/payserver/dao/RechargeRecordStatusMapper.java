@@ -18,6 +18,8 @@ public interface RechargeRecordStatusMapper {
 	
 	int updateChannelTradeNoByTradeNo(String tradeNo, String channelTradeNo);
 	
+	int delete(long chargeLogId);
+	
 	long getTradeNoSegment();
 	
 	long getChargeLogId();

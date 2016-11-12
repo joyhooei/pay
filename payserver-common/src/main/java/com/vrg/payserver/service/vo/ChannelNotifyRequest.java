@@ -47,7 +47,7 @@ public class ChannelNotifyRequest {
 	// -302 查询渠道订单失败
 	public static final String ERR_SEARCH_CHANNEL_ORDER_FAIL = ErrorCode.ERR_SEARCH_CHANNEL_ORDER_FAIL;
 	// 处理状态
-//	private String stateCode = SUCCESS;
+	private String stateCode = SUCCESS;
 	private String stateMsg = "success";
 	// 渠道请求的原始解析信息
 	private String xgAppId;
@@ -84,7 +84,7 @@ public class ChannelNotifyRequest {
 
 	// 回填
 	// 支付状态是否成功，仅stateCode=STATE_SUCCESS时有效
-//	public static final String PAY_STATUS_SUCCESS = NotifyGameRequest.PAY_STATUS_SUCCESS;
+	public static final String PAY_STATUS_SUCCESS = NotifySubAgentRequest.PAY_STATUS_SUCCESS;
 //	public static final String PAY_STATUS_FAIL = NotifyGameRequest.PAY_STATUS_FAIL;
 //	private String payStatus = PAY_STATUS_SUCCESS;
 	private String chargeChannelId;
@@ -127,20 +127,20 @@ public class ChannelNotifyRequest {
 		this.deviceId = deviceId;
 	}
 
-//	/**
-//	 * @return the stateCode
-//	 */
-//	public String getStateCode() {
-//		return stateCode;
-//	}
-//
-//	/**
-//	 * @param stateCode
-//	 *            the stateCode to set
-//	 */
-//	public void setStateCode(String stateCode) {
-//		this.stateCode = stateCode;
-//	}
+	/**
+	 * @return the stateCode
+	 */
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	/**
+	 * @param stateCode
+	 *            the stateCode to set
+	 */
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
+	}
 
 	/**
 	 * @return the stateMsg

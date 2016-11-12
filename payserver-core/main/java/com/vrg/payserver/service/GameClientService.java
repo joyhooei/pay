@@ -152,8 +152,6 @@ public class GameClientService {
 		rechargeRecordStatus.setStatus(RechargeRecordBase.STATUS_INIT);
 
 		// 获取订单号
-		// long chargeLogId = rechargeRecordStatusMapper.getChargeLogId();
-		// String tradeNo = rechargeRecordStatusMapper.getTradeNo(envId);
 		long chargeLogId = getChargeLogId();
 		String tradeNo = getTradeNo();
 		rechargeRecordStatus.setTradeNo(tradeNo);

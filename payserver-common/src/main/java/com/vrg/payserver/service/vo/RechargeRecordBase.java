@@ -44,6 +44,8 @@ public class RechargeRecordBase {
 	private int paidAmount;
 	// PAID_TIME DATE 订单支付时间
 	private Date paidTime = new Date();
+	// 下级代理商交易订单号
+	private String subAgentTradeNo;
 	// CHANNEL_TRADE_NO VARCHAR(64) 渠道订单号
 	private String channelTradeNo;
 	// CHARGE_CHANNEL_INST VARCHAR2(128) 支付渠道详细信息(中国工商银行)
@@ -72,10 +74,19 @@ public class RechargeRecordBase {
 	// STATE_CODE VARCHAR2(16) 异常错误码
 	private String stateCode;
 	
+	// 下级代理商的通知次数
+	private int subAgentNotifyTimes;
+	
+	// 下级代理商的url
+	private String subAgentNotifyUrl;
+	
 	/**
 	 * vrg在支付渠道的唯一标识
 	 */
 	private String channelPartnerId;
+	
+	// 订单完成时间
+	private Date finishTime;
 	
 	public String getTradeNo() {
 		return tradeNo;
@@ -254,6 +265,38 @@ public class RechargeRecordBase {
 
 	public void setChannelPartnerId(String channelPartnerId) {
 		this.channelPartnerId = channelPartnerId;
+	}
+	
+	public int getSubAgentNotifyTimes() {
+		return subAgentNotifyTimes;
+	}
+
+	public void setSubAgentNotifyTimes(int subAgentNotifyTimes) {
+		this.subAgentNotifyTimes = subAgentNotifyTimes;
+	}
+	
+	public String getSubAgentNotifyUrl() {
+		return subAgentNotifyUrl;
+	}
+
+	public void setSubAgentNotifyUrl(String subAgentNotifyUrl) {
+		this.subAgentNotifyUrl = subAgentNotifyUrl;
+	}
+
+	public String getSubAgentTradeNo() {
+		return subAgentTradeNo;
+	}
+
+	public void setSubAgentTradeNo(String subAgentTradeNo) {
+		this.subAgentTradeNo = subAgentTradeNo;
+	}
+
+	public Date getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(Date finishTime) {
+		this.finishTime = finishTime;
 	}
 
 	/*
