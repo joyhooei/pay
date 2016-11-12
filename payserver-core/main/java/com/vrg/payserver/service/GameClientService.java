@@ -213,9 +213,9 @@ public class GameClientService {
 		ClientNewRechargeResponse response = new ClientNewRechargeResponse();
 		response.setCode(ErrorCode.SUCCESS);
 		ClientNewRechargeResponseData data = new ClientNewRechargeResponseData();
-		data.setChannelPartnerId(request.getChannelPartnerId());
-		data.setChannelId(request.getChannelId());
-		data.setChannelTradeNo(request.getChannelTradeNo());
+//		data.setChannelPartnerId(request.getChannelPartnerId());
+//		data.setChannelId(request.getChannelId());
+//		data.setChannelTradeNo(request.getChannelTradeNo());
 		data.setCustomInfo(request.getCustomInfo());
 		data.setPartnerId(request.getPartnerId());
 		response.setData(data);
@@ -225,18 +225,18 @@ public class GameClientService {
 	private void parseNewRechargeRequest(RechargeRecordBase rechargeRecordStatus, ClientNewRechargeRequest request) {
 //		 rechargeRecordStatus.setChargeLogId(chargeLogId);
 		 rechargeRecordStatus.setTradeNo(request.getTradeNo());
-		if (!StringUtils.isEmpty(request.getChannelPartnerId())) {
-			rechargeRecordStatus.setChannelPartnerId(request.getChannelPartnerId());
-		}
+//		if (!StringUtils.isEmpty(request.getChannelPartnerId())) {
+//			rechargeRecordStatus.setChannelPartnerId(request.getChannelPartnerId());
+//		}
 		if (!StringUtils.isEmpty(request.getChannelId())) {
 			rechargeRecordStatus.setChannelId(request.getChannelId());
 		}
 		if (!StringUtils.isEmpty(request.getPaidAmount())) {
 			rechargeRecordStatus.setPaidAmount(NumberUtils.toInt(request.getPaidAmount(), 0));
 		}
-		if (!StringUtils.isEmpty(request.getChannelTradeNo())) {
-			rechargeRecordStatus.setChannelTradeNo(request.getChannelTradeNo());
-		}
+//		if (!StringUtils.isEmpty(request.getChannelTradeNo())) {
+//			rechargeRecordStatus.setChannelTradeNo(request.getChannelTradeNo());
+//		}
 		if (!StringUtils.isEmpty(request.getPartnerId())) {
 			rechargeRecordStatus.setPartnerId(request.getPartnerId());
 		}

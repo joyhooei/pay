@@ -84,7 +84,6 @@ public class ChannelController {
 
 			// 创建订单
 //			XGLog.enterStep("创建订单");
-			request.setDeviceIp(IPUtils.getRemoteAddr(hRequest));
 			response = gameClientService.createOrder(request);
 			if (!StringUtils.equals(ErrorCode.SUCCESS, response.getCode())) {
 //				XGLog.supplementMessage("createOrder failed, channelId = {}, xgAppId = {}, request data = {}, response data = {}.", channelId, xgAppId, request, response);				
@@ -108,14 +107,12 @@ public class ChannelController {
 			if (createChannelResponse != null && createChannelResponse.getData() != null) {
 				// 获取渠道创建的订单号
 				CreateChannelOrderResponseData channelResponseData = createChannelResponse.getData();
-				String channelTradeNo = channelResponseData.getChannelTradeNo();
 //				XGLog.supplementBizInfo(null, null, null, null, null, null, null, channelTradeNo, null, null, null, null, null, null, null);
-				if (!StringUtils.isEmpty(channelTradeNo)) {
-					request.setChannelTradeNo(channelTradeNo);
-					rechargeRecordStatusMapper.updateChannelTradeNoByTradeNo(response.getData().getTradeNo(), channelTradeNo);
-				}
-
-				response.getData().setChannelTradeNo(channelTradeNo);
+//				if (!StringUtils.isEmpty(channelTradeNo)) {
+//					rechargeRecordStatusMapper.updateChannelTradeNoByTradeNo(response.getData().getTradeNo(), channelTradeNo);
+//				}
+//
+//				response.getData().setChannelTradeNo(channelTradeNo);
 				response.getData().setNonceStr(channelResponseData.getNonceStr());
 				response.getData().setPrepayId(channelResponseData.getPrepayId());
 				response.getData().setSubmitTime(channelResponseData.getSubmitTime());
