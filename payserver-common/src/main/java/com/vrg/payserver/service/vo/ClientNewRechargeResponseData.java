@@ -11,15 +11,15 @@ import com.alibaba.fastjson.JSON;
  */
 public class ClientNewRechargeResponseData {
 	// channelPartnerId 否 String 渠道分配唯一标识
-	private String channelPartnerId;
+	//private String channelPartnerId;
 	// partnerId 是 String vrg的唯一标识
 	private String partnerId;
 	// channelId 是 String 运营渠道编号
-	private String channelId;
+	//private String channelId;
 	// tradeNo 是 String 订单号
 	private String tradeNo;
 	// channelTradeNo 否 String 渠道订单号
-	private String channelTradeNo;
+	//private String channelTradeNo;
 	// prepayId 否 String 预支付订单号
 	private String prepayId;
 	// nonceStr 否 String 32位内的随机串，防重发
@@ -42,17 +42,17 @@ public class ClientNewRechargeResponseData {
 	/**
 	 * @return the channelId
 	 */
-	public String getChannelId() {
-		return channelId;
-	}
+//	public String getChannelId() {
+//		return channelId;
+//	}
 
 	/**
 	 * @param channelId
 	 *            the channelId to set
 	 */
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
-	}
+//	public void setChannelId(String channelId) {
+//		this.channelId = channelId;
+//	}
 
 	/**
 	 * @return the tradeNo
@@ -72,17 +72,17 @@ public class ClientNewRechargeResponseData {
 	/**
 	 * @return the channelTradeNo
 	 */
-	public String getChannelTradeNo() {
-		return channelTradeNo;
-	}
+//	public String getChannelTradeNo() {
+//		return channelTradeNo;
+//	}
 
 	/**
 	 * @param channelTradeNo
 	 *            the channelTradeNo to set
 	 */
-	public void setChannelTradeNo(String channelTradeNo) {
-		this.channelTradeNo = channelTradeNo;
-	}
+//	public void setChannelTradeNo(String channelTradeNo) {
+//		this.channelTradeNo = channelTradeNo;
+//	}
 
 	/**
 	 * @return the prepayId
@@ -174,13 +174,13 @@ public class ClientNewRechargeResponseData {
 		this.sign = sign;
 	}
 
-	public String getChannelPartnerId() {
-		return channelPartnerId;
-	}
-
-	public void setChannelPartnerId(String channelPartnerId) {
-		this.channelPartnerId = channelPartnerId;
-	}
+//	public String getChannelPartnerId() {
+//		return channelPartnerId;
+//	}
+//
+//	public void setChannelPartnerId(String channelPartnerId) {
+//		this.channelPartnerId = channelPartnerId;
+//	}
 
 	public String getPartnerId() {
 		return partnerId;

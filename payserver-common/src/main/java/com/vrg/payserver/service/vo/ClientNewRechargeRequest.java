@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSON;
 public class ClientNewRechargeRequest {
 	// type 是 String 接口类型，固定为update-order
 	private String type;
-	
 	/*
 	 * partnerId 设备编号
 	 */
@@ -18,14 +17,14 @@ public class ClientNewRechargeRequest {
 	private String channelId;
 	
 	// 请求创建订单的客户端ip
-	private String deviceIp;
+	//private String deviceIp;
 	
-	private String channelPartnerId;
+	//private String channelPartnerId;
 	
 	/*
 	 * currencyName 否 String 支付货币名称
 	 */
-	private String currencyName;
+	//private String currencyName;
 	
 	/*
 	 *  paidAmount 否 String 总支付金额(单位分)
@@ -55,7 +54,7 @@ public class ClientNewRechargeRequest {
 	/*
 	 *  channelTradeNo 支付渠道侧分配的订单号
 	 */
-	private String channelTradeNo;
+	//private String channelTradeNo;
 
 	public String getType() {
 		return type;
@@ -81,13 +80,13 @@ public class ClientNewRechargeRequest {
 		this.channelId = channelId;
 	}
 
-	public String getCurrencyName() {
-		return currencyName;
-	}
-
-	public void setCurrencyName(String currencyName) {
-		this.currencyName = currencyName;
-	}
+//	public String getCurrencyName() {
+//		return currencyName;
+//	}
+//
+//	public void setCurrencyName(String currencyName) {
+//		this.currencyName = currencyName;
+//	}
 
 	public String getPaidAmount() {
 		return paidAmount;
@@ -129,29 +128,29 @@ public class ClientNewRechargeRequest {
 		this.tradeNo = tradeNo;
 	}
 
-	public String getChannelTradeNo() {
-		return channelTradeNo;
-	}
-
-	public void setChannelTradeNo(String channelTradeNo) {
-		this.channelTradeNo = channelTradeNo;
-	}
-	
-	public String getDeviceIp() {
-		return deviceIp;
-	}
-
-	public void setDeviceIp(String deviceIp) {
-		this.deviceIp = deviceIp;
-	}
-
-	public String getChannelPartnerId() {
-		return channelPartnerId;
-	}
-
-	public void setChannelPartnerId(String channelPartnerId) {
-		this.channelPartnerId = channelPartnerId;
-	}
+//	public String getChannelTradeNo() {
+//		return channelTradeNo;
+//	}
+//
+//	public void setChannelTradeNo(String channelTradeNo) {
+//		this.channelTradeNo = channelTradeNo;
+//	}
+//	
+//	public String getDeviceIp() {
+//		return deviceIp;
+//	}
+//
+//	public void setDeviceIp(String deviceIp) {
+//		this.deviceIp = deviceIp;
+//	}
+//
+//	public String getChannelPartnerId() {
+//		return channelPartnerId;
+//	}
+//
+//	public void setChannelPartnerId(String channelPartnerId) {
+//		this.channelPartnerId = channelPartnerId;
+//	}
 
 	@Override
 	public String toString() {
