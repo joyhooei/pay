@@ -1,6 +1,8 @@
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 apply plugin: "java"
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "spring-boot"
 
 buildscript {
     ext {
@@ -13,14 +15,14 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.springframework:springloaded:${springLoadedVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE")
     }
 }
 
-apply plugin: "spring-boot"
 
 springBoot {
     backupSource = false
-    mainClass = "com.cupe.payserver.PayserverCoreApplication"
+    mainClass = "com.vrg.payserver.PayserverCoreApplication"
 }
 
 bootRun {
@@ -30,11 +32,12 @@ bootRun {
 }
 
 jar {
-
+    baseName = "pay-server"
+    destinationDir = new File("${rootProject.projectDir}/payserver-core/publish")
 }
 
 dependencies {
-	compile fileTree(dir: "lib", include: "*.jar")
+		compile fileTree(dir: "lib", include: "*.jar")
 
     compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
             "org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
