@@ -46,7 +46,8 @@ public interface IServerCoreService {
 	void onPaySuccess(ChannelRequest xgRequest);
 
 	void onPayException(ChannelRequest xgRequest);
-
+	
+	void onPayFail(RechargeRecordBase rechargeRecord);
 
 	/**
 	 * 获取游戏服务端密钥

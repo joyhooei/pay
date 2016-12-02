@@ -22,7 +22,7 @@ import com.vrg.payserver.dao.RechargeLogMapper;
 import com.vrg.payserver.dao.RechargeRecordStatusMapper;
 import com.vrg.payserver.repository.ChannelParamRepository;
 import com.vrg.payserver.repository.PartnerRespository;
-import com.vrg.payserver.service.GameClientService;
+import com.vrg.payserver.service.ClientService;
 import com.vrg.payserver.service.IServerCoreService;
 import com.vrg.payserver.service.ParamRepository;
 import com.vrg.payserver.service.RechargeRequestExceptionService;
@@ -37,6 +37,7 @@ import com.vrg.payserver.service.vo.RechargeRequestException;
 import com.vrg.payserver.service.vo.RechargeRequestLog;
 import com.vrg.payserver.util.ErrorCode;
 import com.vrg.payserver.util.HttpUtils;
+import com.vrg.payserver.util.Log;
 import com.vrg.payserver.util.SignCore;
 
 @Service
@@ -70,7 +71,7 @@ public class ServerCoreService implements IServerCoreService {
 	private ParamRepository paramRepository;
 	
 	@Autowired
-	private GameClientService gameClientService;
+	private ClientService gameClientService;
 	
 	@Autowired
 	private PartnerRespository partnerRespository;
@@ -192,6 +193,12 @@ public class ServerCoreService implements IServerCoreService {
 		
 	}
 	
+	@Override
+	public void onPayFail(RechargeRecordBase rechargeRecord) {
+		Log.supplementMessage("order is paied failed, rechargeRecord={}", rechargeRecord);
+//		rechargeRecordStatusMapper.updateStatusByChargeLogId(rechargeRecord.getChargeLogId(), RechargeRecordBase.STATUS_FAIL);
+	}
+	
 	private void onPayFinish(ChannelRequest channelRequest) {
 		// 修改订单
 		// 如果是成功，则修改订单成功并发送通知给游戏
@@ -310,16 +317,16 @@ public class ServerCoreService implements IServerCoreService {
 	}
 	
 	private void notifyGame(RechargeRecordBase rechargeRecord) {
-//		XGLog.changeLogContextTypeToAppErr();
+		Log.changeLogContextTypeToAppErr();
 		if (rechargeRecord.getStatus() == RechargeRecordBase.STATUS_NOTIFY_FAIL) {
 			rechargeRecord.setStatus(RechargeRecordBase.STATUS_FAIL);
 			rechargeFailLogMapper.create(rechargeRecord);
-//			rechargeRecordStatusMapper.delete(rechargeRecord.getChargeLogId());
-//			XGLog.supplementMessage(MessageFormat.format("notify fail message to game,rechargeRecord={0},  chargeLogId={1}", rechargeRecord, rechargeRecord.getChargeLogId()));
+			rechargeRecordStatusMapper.delete(rechargeRecord.getChargeLogId());
+			Log.supplementMessage(MessageFormat.format("notify fail message to game,rechargeRecord={0},  chargeLogId={1}", rechargeRecord, rechargeRecord.getChargeLogId()));
 			return;
 		}
 		if (rechargeRecord.getStatus() != RechargeRecordBase.STATUS_NOTIFY_SUCCESS) {
-//			XGLog.supplementMessage("rechargeRecord not STATUS_NOTIFY_SUCCESS");
+			Log.supplementMessage("rechargeRecord not STATUS_NOTIFY_SUCCESS");
 			return;
 		}
 
@@ -329,12 +336,12 @@ public class ServerCoreService implements IServerCoreService {
 
 		if (StringUtils.isEmpty(notifyUrl)) {
 			String msg = "notify game failed, can not find notify url";
-			// rechargeRecordStatusMapper.increaseGameNotifyTimesByChargeLogId(chargeLogId);
+//			 rechargeRecordStatusMapper.increaseGameNotifyTimesByChargeLogId(chargeLogId);
 			rechargeRecord.setSubAgentNotifyTimes(rechargeRecord.getSubAgentNotifyTimes() + 1);
 			rechargeRecord.setStateCode(ErrorCode.ERR_NOTIFY_GAME_URL_EMPTY);
 			rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 			rechargeRecordStatusMapper.update(rechargeRecord);
-//			XGLog.supplementMessage(MessageFormat.format("notify game failed, can not find notify url,rechargeRecord={0}", rechargeRecord));
+			Log.supplementMessage(MessageFormat.format("notify game failed, can not find notify url,rechargeRecord={0}", rechargeRecord));
 			return;
 		}
 
@@ -349,6 +356,7 @@ public class ServerCoreService implements IServerCoreService {
 		notifySubAgentRequest.setTs(SignCore.getTs());
 		notifySubAgentRequest.setPaidTime(format.format(rechargeRecord.getPaidTime()));
 		notifySubAgentRequest.setPayStatus(payStatus);
+		notifySubAgentRequest.setPaidAmount(String.valueOf(rechargeRecord.getPaidAmount()));
 		notifySubAgentRequest.buildRechargeOrderExt();
 		
 		String secretKey = partnerRespository.getSecretKey(rechargeRecord.getPartnerId());
@@ -380,7 +388,7 @@ public class ServerCoreService implements IServerCoreService {
 			rechargeRecord.setStateCode(ErrorCode.ERR_NOTIFY_GAME_OVERTIME);
 			rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 			rechargeRecordStatusMapper.update(rechargeRecord);
-//			XGLog.supplementMessage(MessageFormat.format("notify game failed, can not get the response from game server,rechargeRecord={0}", rechargeRecord));
+			Log.supplementMessage(MessageFormat.format("notify sub-channel failed, can not get the response from sub-channel server,rechargeRecord={0}", rechargeRecord));
 			return;
 		}
 		NotifySubAgentResponse notifySubAgentResponse = null;
@@ -393,7 +401,7 @@ public class ServerCoreService implements IServerCoreService {
 			rechargeRecord.setStateCode(ErrorCode.ERR_NOTIFY_GAME_RESPONSE_ERROR);
 			rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 			rechargeRecordStatusMapper.update(rechargeRecord);
-//			XGLog.supplementMessage(MessageFormat.format("game server response is not excepted, url={0}, request={1}, response={2}, rechargeRecord={3}", notifyUrl, body, responseString, rechargeRecord));
+			Log.supplementMessage(MessageFormat.format("sub-channel server response is not excepted, url={0}, request={1}, response={2}, rechargeRecord={3}", notifyUrl, body, responseString, rechargeRecord));
 			return;
 		}
 
@@ -406,10 +414,10 @@ public class ServerCoreService implements IServerCoreService {
 			rechargeLogMapper.create(rechargeRecord);
 			rechargeRecordStatusMapper.delete(chargeLogId);
 			rechargeLog.info(JSON.toJSONString(rechargeRecord));
-//			XGLog.changeLogContextTypeToInfo();
-//			XGLog.supplementMessage(MessageFormat.format(
-//				"notify game success,rechargeRecord={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
-//				rechargeRecord, notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
+			Log.changeLogContextTypeToInfo();
+			Log.supplementMessage(MessageFormat.format(
+				"notify sub-channel success,rechargeRecord={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
+				rechargeRecord, notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
 			return;
 		}
 		// 判断返回值是否重发
@@ -420,10 +428,10 @@ public class ServerCoreService implements IServerCoreService {
 			rechargeRecord.setStateCode(ErrorCode.ERR_RESEND);
 			rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 			rechargeRecordStatusMapper.update(rechargeRecord);
-//			XGLog.changeLogContextTypeToInfo();
-//			XGLog.supplementMessage(MessageFormat.format(
-//				"notify game success,rechargeRecord={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
-//				rechargeRecord, notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
+			Log.changeLogContextTypeToInfo();
+			Log.supplementMessage(MessageFormat.format(
+				"notify sub-channel success,rechargeRecord={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
+				rechargeRecord, notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
 			return;
 		}
 		// 判断游戏是否拒绝
@@ -434,9 +442,9 @@ public class ServerCoreService implements IServerCoreService {
 			rechargeRecord.setStateCode(ErrorCode.ERR_GAME_REJECT);
 			rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 			rechargeRecordStatusMapper.update(rechargeRecord);
-//			XGLog.supplementMessage(MessageFormat.format(
-//				"game server response is not excepted, httpCode={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
-//				"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
+			Log.supplementMessage(MessageFormat.format(
+				"sub-channel server response is not excepted, httpCode={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
+				"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
 			return;
 		}
 		// 判断游戏是否异常
@@ -447,22 +455,22 @@ public class ServerCoreService implements IServerCoreService {
 			rechargeRecord.setStateCode(ErrorCode.ERR_EXCEPTION);
 			rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 			rechargeRecordStatusMapper.update(rechargeRecord);
-//			XGLog.supplementMessage(MessageFormat.format(
-//				"notify game failed, the order has some exception info, httpCode={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
-//				"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
+			Log.supplementMessage(MessageFormat.format(
+				"notify sub-channel failed, the order has some exception info, httpCode={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
+				"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
 			return;
 		}
 		// 判断返回值是否其他错误
-		// rechargeRecordStatusMapper.updateStatusByChargeLogId(chargeLogId, RechargeRecordBase.STATUS_GAME_REJECT);
+//		 rechargeRecordStatusMapper.updateStatusByChargeLogId(chargeLogId, RechargeRecordBase.STATUS_GAME_REJECT);
 		// rechargeRecordStatusMapper.increaseGameNotifyTimesByChargeLogId(chargeLogId);
 		String msg = MessageFormat.format("notify game failed, game server reject this notice,response={0}.", responseString);
 		rechargeRecord.setSubAgentNotifyTimes(rechargeRecord.getSubAgentNotifyTimes() + 1);
 		rechargeRecord.setStateCode(ErrorCode.ERR_NOTIFY_GAME_RESPONSE_FAIL);
 		rechargeRecord.setExceptionInfoTrimedWhenExtendLength(msg);
 		rechargeRecordStatusMapper.update(rechargeRecord);
-//		XGLog.supplementMessage(MessageFormat.format(
-//			"game server response is not excepted, httpCode={0}, notifyGameRequest={1}, notifyGameResponse={2}, notifyUrl={3}, chargeLogId={4}",
-//			"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
+		Log.supplementMessage(MessageFormat.format(
+			"sub-channel server response is not excepted, httpCode={0}, notifySubChannelRequest={1}, notifySubChannelResponse={2}, notifyUrl={3}, chargeLogId={4}",
+			"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
 		return;
 	}
 }

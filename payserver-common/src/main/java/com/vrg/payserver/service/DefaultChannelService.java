@@ -254,15 +254,14 @@ public final class DefaultChannelService implements IChannel {
 		} catch (Throwable t) {
 			String msg = MessageFormat.format("error in notifyRechargeResult, requestData={0}, channelId={1}, xgAppId={2}, serverVersion={3}, error={4}", request, channelId, partnerId, hRequest.getQueryString(), t.getMessage());
 			Log.supplementExceptionMessage(t);
-//			xgRequest.setStateCode(ChannelRequest.ERR_SYSTEM);
+			request.setStateCode(ChannelRequest.ERR_SYSTEM);
 			request.setStateMsg(msg);
 			ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, request.getPayNoticeRequestData());
 			responseString = responseEntity.getBody();
 			return responseEntity;
 		} finally {
 			if (channelRequestData != null) {
-//				Log.supplementBizInfo(null, null, xgRequest.getPlanId(), channelId, channelRequestData.getUid(), null,
-//				channelRequestData.getTradeNo(), channelRequestData.getChannelTradeNo(), channelRequestData.getProductId(), channelRequestData.getProductName(), null, channelRequestData.getPayStatus(), xgRequest.getStateCode() + " " + xgRequest.getStateMsg(), null, null);
+				Log.supplementBizInfo(channelRequestData.getPartnerId(), channelId, channelRequestData.getTradeNo(), channelRequestData.getChannelTradeNo(), null, channelRequestData.getPayStatus(), request.getStateCode() + " " + request.getStateMsg());
 			} else {
 				Log.supplementBizInfo(partnerId, channelId, null, null, null, null, request.getStateCode() + request.getStateMsg());
 			}
@@ -287,7 +286,7 @@ public final class DefaultChannelService implements IChannel {
 			RechargeRequestLog requestLog = new RechargeRequestLog();
 			requestLog.setChannelId(channelId);
 			requestLog.setChannelTradeNo(channelTradeNo);
-//			requestLog.setEventType(RequestType.CHANNEL_NOTIFY);
+			requestLog.setEventType(RequestType.CHANNEL_NOTIFY);
 			requestLog.setHttpServletRequest(hRequest);
 			requestLog.setRequestTime(requestTime);
 			requestLog.setRequestValue(request.toString());
@@ -296,7 +295,6 @@ public final class DefaultChannelService implements IChannel {
 				requestLog.setResponseValue(JSON.toJSONString(responseString));
 			}
 			requestLog.setTradeNo(tradeNo);
-//			requestLog.setUid(uid);
 			requestLog.setPartnerId(partnerId);
 			serverCoreService.saveRequestLog(requestLog);
 		}

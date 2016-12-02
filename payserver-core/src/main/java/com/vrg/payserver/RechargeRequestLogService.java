@@ -35,7 +35,7 @@ public class RechargeRequestLogService {
 	private static final Logger requestLog = LoggerFactory.getLogger("REQUEST_LOGGER");
 	private static final String DEBUG_UID_PREFIX = "debug_";
 	private static final String DEBUG_XGTEST_UID_PREFIX = Util.getXgUid(ChannelCode.TESTCHANNEL, DEBUG_UID_PREFIX);
-	@Value("${xgsdk.server.ip:127.0.0.1}")
+	@Value("${vrg.server.ip:127.0.0.1}")
 	private String serverIp;
 	private String localIp;
 	private static final HashSet<String> LOCALIP_TYPESET = new HashSet<String>();
@@ -47,33 +47,33 @@ public class RechargeRequestLogService {
 		LOCALIP_TYPESET.add(RequestType.VERIFY_CHANNEL_ORDER);
 	}
 
-	@Value("${xgsdk.recharge_request_log.create-order:file,db}")
+	@Value("${vrg.recharge_request_log.create-order:file,db}")
 	private String logCreateOrder;
-	@Value("${xgsdk.recharge_request_log.update-order:file,db}")
+	@Value("${vrg.recharge_request_log.update-order:file,db}")
 	private String logUpdateOrder;
-	@Value("${xgsdk.recharge_request_log.cancel-order:file,db}")
+	@Value("${vrg.recharge_request_log.cancel-order:file,db}")
 	private String logCancelOrder;
-	@Value("${xgsdk.recharge_request_log.testchannel-notify:file,db}")
+	@Value("${vrg.recharge_request_log.testchannel-notify:file,db}")
 	private String logTestchannelNotify;
-	@Value("${xgsdk.recharge_request_log.notify-game:file,db}")
+	@Value("${vrg.recharge_request_log.notify-game:file,db}")
 	private String logNotifyGame;
-	@Value("${xgsdk.recharge_request_log.verify-order:file,db}")
+	@Value("${vrg.recharge_request_log.verify-order:file,db}")
 	private String logVerifyOrder;
-	@Value("${xgsdk.recharge_request_log.query-order-status:file,db}")
+	@Value("${vrg.recharge_request_log.query-order-status:file,db}")
 	private String logQueryOrderStatus;
-	@Value("${xgsdk.recharge_request_log.channel-notify:file,db}")
+	@Value("${vrg.recharge_request_log.channel-notify:file,db}")
 	private String logChannelNotify;
-	@Value("${xgsdk.recharge_request_log.verify-session:file,db}")
+	@Value("${vrg.recharge_request_log.verify-session:file,db}")
 	private String logVerifySession;
-	@Value("${xgsdk.recharge_request_log.get-channel-param:file,db}")
+	@Value("${vrg.recharge_request_log.get-channel-param:file,db}")
 	private String logGetChannelParam;
-	@Value("${xgsdk.recharge_request_log.search-channel-order:file,db}")
+	@Value("${vrg.recharge_request_log.search-channel-order:file,db}")
 	private String logSearchChannelOrder;
-	@Value("${xgsdk.recharge_request_log.create-channel-order:file,db}")
+	@Value("${vrg.recharge_request_log.create-channel-order:file,db}")
 	private String logCreateChannelOrder;
-	@Value("${xgsdk.recharge_request_log.verify-channel-session:file,db}")
+	@Value("${vrg.recharge_request_log.verify-channel-session:file,db}")
 	private String logVerifyChannelSession;
-	@Value("${xgsdk.recharge_request_log.verify-channel-order:file,db}")
+	@Value("${vrg.recharge_request_log.verify-channel-order:file,db}")
 	private String logVerifyChannelOrder;
 	private Map<String, Boolean> logFileMap;
 	private Map<String, Boolean> logDbMap;

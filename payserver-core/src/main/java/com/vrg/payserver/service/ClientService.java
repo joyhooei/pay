@@ -16,6 +16,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
@@ -29,10 +30,11 @@ import com.vrg.payserver.service.vo.ClientNewRechargeResponseData;
 import com.vrg.payserver.service.vo.RechargeRecordBase;
 import com.vrg.payserver.util.ErrorCode;
 import com.vrg.payserver.util.HttpUtils;
+import com.vrg.payserver.util.Log;
 import com.vrg.payserver.util.SignCore;
 
 @Service
-public class GameClientService {
+public class ClientService {
 	private static final Integer TRADE_LOCK = 0;
 	private static final Integer LOG_LOCK = 1;
 	private static final String ALLOWED_PAY_CURRENCY = "okPayCurrency";
@@ -65,7 +67,6 @@ public class GameClientService {
 	/*
 	 * 订单号分段，数据库中每次增长100，此分段数值每次使用自增1，自增达到100之后重新从数据库中获取新值
 	 */
-	// @Transactional(propagation=Propagation.REQUIRES_NEW)
 	private long getTradeNoSegment() {
 		long segment;
 		while ((segment = tradeNoSegmentStart.incrementAndGet()) > tradeNoSegmentEnd) {
@@ -82,7 +83,6 @@ public class GameClientService {
 	/*
 	 * 充值日志id，数据库中每次增长100，此分段数值每次使用自增1，自增达到100之后重新从数据库中获取新值
 	 */
-	// @Transactional(propagation=Propagation.REQUIRES_NEW)
 	private long getChargeLogId() {
 		long logId;
 		while ((logId = chargeLogIdStart.incrementAndGet()) > chargeLogIdEnd) {
@@ -179,7 +179,7 @@ public class GameClientService {
 		// 验证订单是否存在
 		String tradeNo = request.getTradeNo();
 		RechargeRecordBase rechargeRecordStatus = rechargeRecordStatusMapper.queryByTradeNo(tradeNo);
-//		XGLog.changeLogContextTypeToAppErr();
+		Log.changeLogContextTypeToAppErr();
 		if (rechargeRecordStatus == null) {
 			response.setCode(ErrorCode.ERR_ORDERID_NOTEXIST);
 			response.setMsg(MessageFormat.format("The order[{0}] has finished, or it do not exist.", tradeNo));
@@ -203,7 +203,7 @@ public class GameClientService {
 		response.setCode(ErrorCode.SUCCESS);
 		response.setMsg(MessageFormat.format("The order[{0}] has been updated", tradeNo));
 		response.getData().setTradeNo(rechargeRecordStatus.getTradeNo());
-//		XGLog.changeLogContextTypeToInfo();
+		Log.changeLogContextTypeToInfo();
 		return response;
 	}
 
@@ -299,7 +299,7 @@ public class GameClientService {
 //			ClientQueryOrderStatusResponse response = new ClientQueryOrderStatusResponse();
 //			response.setCode(ErrorCode.ERR_ORDERID_NOTEXIST);
 //			response.setMsg(MessageFormat.format("The order[{0}] can not be found.", orderId));
-//			XGLog.changeLogContextTypeToAppErr();
+//			Log.changeLogContextTypeToAppErr();
 //			return response;
 //		}
 //	}

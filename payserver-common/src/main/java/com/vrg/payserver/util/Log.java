@@ -207,7 +207,17 @@ public class Log {
 			}
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param partnerId
+	 * @param channelId
+	 * @param tradeNo
+	 * @param channelTradeNo
+	 * @param sign
+	 * @param paymentStatus
+	 * @param status
+	 */
 	public static void supplementBizInfo(String partnerId, String channelId, String tradeNo, String channelTradeNo, String sign, String paymentStatus, String status) {
 		LogContext context = (LogContext) logContext.get();
 		if (context != null) {

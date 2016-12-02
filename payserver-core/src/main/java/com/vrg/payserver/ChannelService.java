@@ -46,11 +46,11 @@ public class ChannelService {
 
 	public void searchChannelOrderForClientNotifyRecharge(RechargeClientNotifyRequest clientRequest) {
 		try {
-			//Log.supplementMessage(MessageFormat.format("Start to search order for [{0}] by [{1}] on channel[{2}].", clientRequest.getUid(), clientRequest.getBizKey(), clientRequest.getChannelId()));
+			Log.supplementMessage(MessageFormat.format("Start to search order by [{0}] on channel[{1}].", clientRequest.getBizKey(), clientRequest.getChannelId()));
 			String channelId = clientRequest.getChannelId();
 			IChannel channelImpl = channelRepository.getChannelImpl(channelId);
 			if (channelImpl == null) {
-//				Log.supplementMessage(MessageFormat.format("Failed to search order for [{0}] by [{1}] on channel[{2}], reason: can't find the channel impl of [{2}]", clientRequest.getUid(), clientRequest.getBizKey(), clientRequest.getChannelId()));
+				Log.supplementMessage(MessageFormat.format("Failed to search order by [{0}] on channel[{1}], reason: can't find the channel impl of [{1}]", clientRequest.getBizKey(), clientRequest.getChannelId()));
 				return;
 			}
 			VerifyChannelOrderRequest request = new VerifyChannelOrderRequest();
@@ -60,8 +60,14 @@ public class ChannelService {
 			request.setPlanId(clientRequest.getPlanId());
 			request.setCustomInfo(clientRequest.getRequestValue1() + StringUtils.defaultString(clientRequest.getRequestValue2()));
 			VerifyChannelOrderResponse response = channelImpl.queryRechargeResult(request);
+			
+			if (ErrorCode.ERR_BAD_REQUEST.equals(response.getCode())) {
+//				rechargeClientNotifyRequestMapper.delete(clientRequest);
+				return;
+			}
+//			rechargeClientNotifyRequestMapper.increaseChannelSearchTime(clientRequest);
 		} catch (Throwable t) {
-			Log.supplementExceptionMessage(MessageFormat.format("Error on search order for [{0}] by [{1}] on channel[{2}], reason: exception encountered.", clientRequest.getUid(), clientRequest.getBizKey(), clientRequest.getChannelId()), t);
+			Log.supplementExceptionMessage(MessageFormat.format("Error on search order by [{0}] on channel[{1}], reason: exception encountered.", clientRequest.getBizKey(), clientRequest.getChannelId()), t);
 		}
 	}
 
@@ -97,13 +103,13 @@ public class ChannelService {
 				record.setStateCode(response.getCode());
 				record.setExceptionInfoTrimedWhenExtendLength(response.getMsg());
 				rechargeRecordStatusMapper.update(record);
-//				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
+				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of partnerId[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getPartnerId(), record.getChannelId(), response));
 				return;
 			}
 			// 如果验证不成功
 			if (!StringUtils.equalsIgnoreCase(ErrorCode.SUCCESS, response.getCode())) {
 				this.increaseTimes(record, response, 1);
-//				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
+				Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getPartnerId(), record.getChannelId(), response));
 				return;
 			}
 			this.setRechargeRecordBase(response, record);
@@ -114,18 +120,18 @@ public class ChannelService {
 				rechargeRecordStatusMapper.update(record);
 				Log.enterStep("通知游戏");
 			} else {
-				// 和海兵讨论支付失败不做处理，避免订单在渠道还在处理中，当主动查询先于渠道通知造成异常处理
+				// 支付失败不做处理，避免订单在渠道还在处理中，当主动查询先于渠道通知造成异常处理
 				Log.enterStep("增加SearchChannelOrderTimes");
 				this.increaseTimes(record, response, 1);
 				// //支付失败
-				// record.setStatus(RechargeRecordBase.STATUS_NOTIFY_FAIL);
-				// rechargeRecordStatusMapper.update(record);
-				// serverCoreService.onPayFail(record);
+				 record.setStatus(RechargeRecordBase.STATUS_NOTIFY_FAIL);
+				 rechargeRecordStatusMapper.update(record);
+				 serverCoreService.onPayFail(record);
 			}
-//			Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of product[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), response));
+			Log.supplementMessage(MessageFormat.format("end to search the order[{0}] of partner[{1}] from channel[{2}] server. The result is [{3}]", record.getTradeNo(), record.getPartnerId(), record.getChannelId(), response));
 			return;
 		} catch (Throwable t) {
-			String msg = "";//MessageFormat.format("error in search the order[{0}] of product[{1}] from channel[{2}] server. The error is [{3}].", record.getTradeNo(), record.getXgAppId(), record.getChannelId(), t.getMessage());
+			String msg = MessageFormat.format("error in search the order[{0}] of product[{1}] from channel[{2}] server. The error is [{3}].", record.getTradeNo(), record.getPartnerId(), record.getChannelId(), t.getMessage());
 			Log.supplementMessage(msg);
 			Log.supplementExceptionMessage(t);
 			record.setSearchChannelOrderTimes(record.getSearchChannelOrderTimes() + 1);
