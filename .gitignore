@@ -42,6 +42,8 @@ payserver-core/flyway/.classpath
 payserver-core/flyway/.project
 payserver-core/flyway/.settings/
 
+channels/*/build/
+
 .gradle/
 gradle
 .idea/
