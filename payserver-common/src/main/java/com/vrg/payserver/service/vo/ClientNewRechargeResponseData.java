@@ -4,6 +4,8 @@
 package com.vrg.payserver.service.vo;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class ClientNewRechargeResponseData {
 	// channelPartnerId 否 String 渠道分配唯一标识
@@ -16,6 +18,7 @@ public class ClientNewRechargeResponseData {
 	private String tradeNo;
 	
 	//channelTradeNo 否 String 渠道订单号
+	@JsonInclude(Include.NON_NULL)
 	private String channelTradeNo;
 	// prepayId 否 String 预支付订单号
 	private String prepayId;

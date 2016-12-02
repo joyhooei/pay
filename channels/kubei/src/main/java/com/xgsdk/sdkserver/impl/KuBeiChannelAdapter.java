@@ -34,7 +34,7 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
 	private static final String PID = "160080";
 	private static final String MACID = "0199800000000749";
 	private static final String KEY = "BB1F64449C0FE32B81DFE37BBBFD288A";
-	private static final String NOTIFY_URL = "http://121.201.65.16:18888/GetRequest";
+	private static final String NOTIFY_URL = "http://121.201.65.16:8090//pay-notify/{0}/{1}";
 	
 	private static final String QUERY_ORDER_URL = "http://demo.counect.com/vcupe/queryPay.do?";
 	private static final String CREATE_ORDER_URL = "http://demo.counect.com/vcupe/getPay.do?";
@@ -117,7 +117,7 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
 		CreateChannelOrderResponseData data = new CreateChannelOrderResponseData();
 
 		KuBeiCreateOrderRequest kudongPay = new KuBeiCreateOrderRequest();
-    	kudongPay.setN(NOTIFY_URL);
+    	kudongPay.setN(MessageFormat.format(NOTIFY_URL, "kubei", request.getPartnerId()));
     	kudongPay.setP(PID);
     	kudongPay.setP1(MACID);
     	kudongPay.setP2(request.getTradeNo());

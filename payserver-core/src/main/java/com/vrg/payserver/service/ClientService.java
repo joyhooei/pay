@@ -241,6 +241,8 @@ public class ClientService {
 		if (!StringUtils.isEmpty(request.getCustomInfo())) {
 			rechargeRecordStatus.setCustomInfo(request.getCustomInfo());
 		}
+		
+		rechargeRecordStatus.setSubAgentNotifyUrl(request.getNotifyUrl());
 	}
 
 //	public ClientQueryOrderStatusResponse queryOrderStatus(ClientQueryOrderStatusRequest request) {

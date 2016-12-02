@@ -22,9 +22,9 @@ public class ClientNewRechargeRequest {
 	//private String channelPartnerId;
 	
 	/*
-	 * currencyName 否 String 支付货币名称
+	 * notifyUrl 是  String 支付成功后的通知地址
 	 */
-	//private String currencyName;
+	private String notifyUrl;
 	
 	/*
 	 *  paidAmount 否 String 总支付金额(单位分)
@@ -166,5 +166,13 @@ public class ClientNewRechargeRequest {
 
 	public void setExceptionInfo(String exceptionInfo) {
 		this.exceptionInfo = exceptionInfo;
+	}
+
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
 	}
 }
