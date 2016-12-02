@@ -56,6 +56,9 @@ public class ClientNewRechargeRequest {
 	 */
 	//private String channelTradeNo;
 
+	// exception info
+	private String exceptionInfo;
+	
 	public String getType() {
 		return type;
 	}
@@ -155,5 +158,13 @@ public class ClientNewRechargeRequest {
 	@Override
 	public String toString() {
 		return JSON.toJSONString(this);
+	}
+
+	public String getExceptionInfo() {
+		return exceptionInfo;
+	}
+
+	public void setExceptionInfo(String exceptionInfo) {
+		this.exceptionInfo = exceptionInfo;
 	}
 }

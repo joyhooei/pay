@@ -17,6 +17,7 @@ import com.vrg.payserver.service.vo.ClientNewRechargeRequest;
 import com.vrg.payserver.service.vo.ClientNewRechargeResponse;
 import com.vrg.payserver.service.vo.CreateChannelOrderRequest;
 import com.vrg.payserver.service.vo.CreateChannelOrderResponse;
+import com.vrg.payserver.service.vo.RechargeMultipleChannelTradeNo;
 import com.vrg.payserver.service.vo.RechargeRecordBase;
 import com.vrg.payserver.service.vo.RechargeRequestLog;
 import com.vrg.payserver.service.vo.VerifyChannelOrderRequest;
@@ -59,16 +60,9 @@ public final class DefaultChannelService implements IChannel {
 		ChannelRequest request = new ChannelRequest();
 		request.setChannelId(channelId);
 		request.setPartnerId(partnerId);
-//		int serverPort = hRequest.getServerPort();
-//		if (serverPort == 80) {
-//			xgRequest.setServerVersion(MessageFormat.format(URL_PATTERN80, hRequest.getScheme(), hRequest.getServerName(), hRequest.getServletPath()));
-//		} else {
-//			xgRequest.setServerVersion(MessageFormat.format(URL_PATTERN, hRequest.getScheme(), hRequest.getServerName(), String.valueOf(serverPort), hRequest.getServletPath()));
-//		}
 		request.setRequestIp(IPUtils.getRemoteAddr(hRequest));
 		request.setStateCode(ChannelRequest.SUCCESS);
 		request.setPayStatus(ChannelRequest.PAY_STATUS_SUCCESS);
-
 
 		RechargeRecordBase rechargeRecord = null;
 		Object responseString = null;
@@ -83,7 +77,7 @@ public final class DefaultChannelService implements IChannel {
 			if (channelRequestData == null) {
 				request.setStateCode(ChannelRequest.ERR_SYSTEM);
 				request.setStateMsg("The pay notice is empty.");
-				ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), null, channelId, channelRequestData);
+				ResponseEntity<?> responseEntity = getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), null, channelId, channelRequestData);
 				responseString = responseEntity.getBody();
 				return responseEntity;
 			}
@@ -92,7 +86,7 @@ public final class DefaultChannelService implements IChannel {
 			request.putChannelData(channelRequestData);
 
 			if (!StringUtils.equals(ChannelRequest.SUCCESS, request.getStateCode())) {
-				ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), null, channelId, channelRequestData);
+				ResponseEntity<?> responseEntity = getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), null, channelId, channelRequestData);
 				responseString = responseEntity.getBody();
 				return responseEntity;
 			}
@@ -122,7 +116,7 @@ public final class DefaultChannelService implements IChannel {
 				// 签名失败，返回成功
 				request.setStateCode(ChannelNotifyRequest.ERR_SIGN);
 				request.setStateMsg(ErrorCode.ERR_SIGN_MSG);
-				ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
+				ResponseEntity<?> responseEntity = getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
 				responseString = responseEntity.getBody();
 				Log.supplementMessage("签名验证不通过");
 				return responseEntity;
@@ -131,35 +125,35 @@ public final class DefaultChannelService implements IChannel {
 
 			Log.enterStep("检查充值记录状态");
 			if (serverCoreService.checkRechargeRecordStatus(rechargeRecord.getStatus())) {
-//				if (!StringUtils.equals(rechargeRecord.getChannelTradeNo(), request.getChannelTradeNo())) {
-//					// 渠道查询，如果订单真实，则自动创建一个新的西瓜订单，并自动通知游戏；
-//					// 如果渠道没有提供查询接口或查询失败，则自动创建一个新西瓜订单，但不自动通知游戏，由人工确定后再决定是否补单
-//					// 以上2种情况都在订单的备注里边添加“多个渠道订单对应西瓜订单[原西瓜订单号]的补单”
-//					String mulExceptionInfo = "此订单是由于渠道重复通知所创建，原始订单号[{0}]";
-//					isMultipleChannelTradeNo = true;
-//					ClientNewRechargeRequest newRechargeReq = new ClientNewRechargeRequest();
-//					BeanUtils.copyProperties(rechargeRecord, newRechargeReq);
-////					newRechargeReq.setExceptionInfo(MessageFormat.format(mulExceptionInfo,rechargeRecord.getTradeNo()));
-//					ClientNewRechargeResponse secondRecharegeRes = serverCoreService.createOrder(newRechargeReq);
-//					String secondXGTradeNo = secondRecharegeRes.getData().getTradeNo();
-//					// 如果xg订单号一致，但渠道订单号不一致，有可能是一个xg订单号对应多个渠道订单号的情况，先记录，后续人工跟进
-//					saveMultipleChannelTradeNo(hRequest, channelId, partnerId, request, rechargeRecord, secondXGTradeNo);
-//					rechargeRecord = serverCoreService.getRechargeRecordByTradeNo(secondXGTradeNo);
-//					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应多个渠道订单号{1}，已记录到RECHARGE_MULTI_CHLNO表，需要由人工识别订单是否真实。", request.getTradeNo(), rechargeRecord.getChannelTradeNo() + "," + request.getChannelTradeNo()));
-//				} else {
-//					// 已收到过通知，返回成功
-//					request.setStateCode(ChannelNotifyRequest.ERR_REPEAT);
-//					request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
-//					ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
-//					responseString = responseEntity.getBody();
-////					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
-//					return responseEntity;
-//				}
+				if (!StringUtils.equals(rechargeRecord.getChannelTradeNo(), request.getChannelTradeNo())) {
+					// 渠道查询，如果订单真实，则自动创建一个新的西瓜订单，并自动通知游戏；
+					// 如果渠道没有提供查询接口或查询失败，则自动创建一个新西瓜订单，但不自动通知游戏，由人工确定后再决定是否补单
+					// 以上2种情况都在订单的备注里边添加“多个渠道订单对应支付网关订单[原支付网关订单号]的补单”
+					String mulExceptionInfo = "此订单是由于渠道重复通知所创建，原始订单号[{0}]";
+					isMultipleChannelTradeNo = true;
+					ClientNewRechargeRequest newRechargeReq = new ClientNewRechargeRequest();
+					BeanUtils.copyProperties(rechargeRecord, newRechargeReq);
+					newRechargeReq.setExceptionInfo(MessageFormat.format(mulExceptionInfo,rechargeRecord.getTradeNo()));
+					ClientNewRechargeResponse secondRecharegeRes = serverCoreService.createOrder(newRechargeReq);
+					String secondGWTradeNo = secondRecharegeRes.getData().getTradeNo();
+					// 如果gw订单号一致，但渠道订单号不一致，有可能是一个gw订单号对应多个渠道订单号的情况，先记录，后续人工跟进
+					saveMultipleChannelTradeNo(hRequest, channelId, partnerId, request, rechargeRecord, secondGWTradeNo);
+					rechargeRecord = serverCoreService.getRechargeRecordByTradeNo(secondGWTradeNo);
+					Log.supplementMessage("重复通知 " + MessageFormat.format("网关订单号{0}对应多个渠道订单号{1}，已记录到RECHARGE_MULTI_CHLNO表，需要由人工识别订单是否真实。", request.getTradeNo(), rechargeRecord.getChannelTradeNo() + "," + request.getChannelTradeNo()));
+				} else {
+					// 已收到过通知，返回成功
+					request.setStateCode(ChannelNotifyRequest.ERR_REPEAT);
+					request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
+					ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
+					responseString = responseEntity.getBody();
+					Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
+					return responseEntity;
+				}
 				request.setStateCode(ChannelNotifyRequest.ERR_REPEAT);
 				request.setStateMsg(MessageFormat.format("The order [{0}] is notified again.", request.getTradeNo()));
 				ResponseEntity<?> responseEntity = this.getPayNoticeResponse(hRequest, request.getStateCode(), request.getStateMsg(), partnerId, channelId, channelRequestData);
 				responseString = responseEntity.getBody();
-//				Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
+				Log.supplementMessage("重复通知 " + MessageFormat.format("西瓜订单号{0}对应的渠道订单号{1}之前已经在{2}通知成功，忽略本次通知。", rechargeRecord.getTradeNo(), rechargeRecord.getChannelTradeNo(), rechargeRecord.getFinishTime()));
 				return responseEntity;
 
 			}
@@ -300,21 +294,19 @@ public final class DefaultChannelService implements IChannel {
 		}
 	}
 
-	private void saveMultipleChannelTradeNo(HttpServletRequest hRequest, String channelId, String xgAppId, ChannelRequest xgRequest, RechargeRecordBase rechargeRecord, String secondXGTradeNo) {
-//		RechargeMultipleChannelTradeNo rechargeMultipleChannelOrderNo = new RechargeMultipleChannelTradeNo();
-//		rechargeMultipleChannelOrderNo.setTradeNo(xgRequest.getTradeNo());
-//		rechargeMultipleChannelOrderNo.setNewTradeNo(secondXGTradeNo);
-//		rechargeMultipleChannelOrderNo.setChannelTradeNo(xgRequest.getChannelTradeNo());
-//		rechargeMultipleChannelOrderNo.setXgAppId(xgAppId);
-//		rechargeMultipleChannelOrderNo.setChannelId(channelId);
-//		rechargeMultipleChannelOrderNo.setPaidAmount(xgRequest.getPayNoticeRequestData().getPaidAmount());
-//		rechargeMultipleChannelOrderNo.setUid(StringUtils.defaultString(xgRequest.getPayNoticeRequestData().getUid(), rechargeRecord.getUid()));
-//		rechargeMultipleChannelOrderNo.setDeviceId(StringUtils.defaultString(xgRequest.getDeviceId(), rechargeRecord.getDeviceId()));
-//		rechargeMultipleChannelOrderNo.setRequestIp(IPUtils.getRemoteAddr(hRequest));
-//		rechargeMultipleChannelOrderNo.setOrderCreateTime(rechargeRecord.getCreateTime());
-//		rechargeMultipleChannelOrderNo.setOrderNotifyTime(new Date());
-//		rechargeMultipleChannelOrderNo.setStatus(RechargeMultipleChannelTradeNo.STATUS_NEW);
-//		serverCoreService.saveMultipleChannelTradeNo(rechargeMultipleChannelOrderNo);
+	private void saveMultipleChannelTradeNo(HttpServletRequest hRequest, String channelId, String partnerId, ChannelRequest xgRequest, RechargeRecordBase rechargeRecord, String secondXGTradeNo) {
+		RechargeMultipleChannelTradeNo rechargeMultipleChannelOrderNo = new RechargeMultipleChannelTradeNo();
+		rechargeMultipleChannelOrderNo.setTradeNo(xgRequest.getTradeNo());
+		rechargeMultipleChannelOrderNo.setNewTradeNo(secondXGTradeNo);
+		rechargeMultipleChannelOrderNo.setChannelTradeNo(xgRequest.getChannelTradeNo());
+		rechargeMultipleChannelOrderNo.setPartnerId(partnerId);
+		rechargeMultipleChannelOrderNo.setChannelId(channelId);
+		rechargeMultipleChannelOrderNo.setPaidAmount(xgRequest.getPayNoticeRequestData().getPaidAmount());
+		rechargeMultipleChannelOrderNo.setRequestIp(IPUtils.getRemoteAddr(hRequest));
+		rechargeMultipleChannelOrderNo.setOrderCreateTime(rechargeRecord.getCreateTime());
+		rechargeMultipleChannelOrderNo.setOrderNotifyTime(new Date());
+		rechargeMultipleChannelOrderNo.setStatus(RechargeMultipleChannelTradeNo.STATUS_NEW);
+		serverCoreService.saveMultipleChannelTradeNo(rechargeMultipleChannelOrderNo);
 	}
 
 	/**

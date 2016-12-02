@@ -5,10 +5,6 @@ package com.vrg.payserver.service.vo;
 
 import com.alibaba.fastjson.JSON;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public class ClientNewRechargeResponseData {
 	// channelPartnerId 否 String 渠道分配唯一标识
 	//private String channelPartnerId;
@@ -18,8 +14,9 @@ public class ClientNewRechargeResponseData {
 	//private String channelId;
 	// tradeNo 是 String 订单号
 	private String tradeNo;
-	// channelTradeNo 否 String 渠道订单号
-	//private String channelTradeNo;
+	
+	//channelTradeNo 否 String 渠道订单号
+	private String channelTradeNo;
 	// prepayId 否 String 预支付订单号
 	private String prepayId;
 	// nonceStr 否 String 32位内的随机串，防重发
@@ -72,17 +69,17 @@ public class ClientNewRechargeResponseData {
 	/**
 	 * @return the channelTradeNo
 	 */
-//	public String getChannelTradeNo() {
-//		return channelTradeNo;
-//	}
+	public String getChannelTradeNo() {
+		return channelTradeNo;
+	}
 
 	/**
 	 * @param channelTradeNo
 	 *            the channelTradeNo to set
 	 */
-//	public void setChannelTradeNo(String channelTradeNo) {
-//		this.channelTradeNo = channelTradeNo;
-//	}
+	public void setChannelTradeNo(String channelTradeNo) {
+		this.channelTradeNo = channelTradeNo;
+	}
 
 	/**
 	 * @return the prepayId

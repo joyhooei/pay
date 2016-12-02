@@ -19,6 +19,7 @@ import com.vrg.payserver.util.CurrencyUtil;
 import com.vrg.payserver.util.DateUtil;
 import com.vrg.payserver.util.ErrorCode;
 import com.vrg.payserver.util.HttpUtils;
+import com.vrg.payserver.util.Log;
 import com.vrg.payserver.util.Util;
 import com.xgsdk.sdkserver.impl.vo.KuBeiCreateOrderRequest;
 import com.xgsdk.sdkserver.impl.vo.KuBeiNotifyRequest;
@@ -47,15 +48,15 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
 		ChannelData requestData = new ChannelData();
 		try {
 			KuBeiNotifyRequest channelData = Util.parseRequestParameter(hRequest, KuBeiNotifyRequest.class);
-			requestData.setStateCode("0");
-			requestData.setPayStatus("0");
+			requestData.setStateCode(ErrorCode.SUCCESS);
+			requestData.setPayStatus(ErrorCode.SUCCESS);
 			requestData.setTradeNo(channelData.getP7());
 			requestData.setChannelTradeNo(channelData.getP0());
 			requestData.setPaidAmount(CurrencyUtil.yuanToFenInt(channelData.getP3()));
 			requestData.setPaidTime(DateUtil.parse(channelData.getP2()));
 			requestData.setChannelObject(channelData);
 		} catch (Throwable t) {
-//			XGLog.supplementExceptionMessage(t);
+			Log.supplementExceptionMessage(t);
 			requestData.setStateCode("-1");
 			requestData.setStateMsg(t.getMessage());
 		}

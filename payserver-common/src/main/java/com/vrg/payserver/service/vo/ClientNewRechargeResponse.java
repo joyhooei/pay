@@ -5,10 +5,6 @@ package com.vrg.payserver.service.vo;
 
 import com.alibaba.fastjson.JSON;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public class ClientNewRechargeResponse {
 	/**
 	 * 接口调用结果代码

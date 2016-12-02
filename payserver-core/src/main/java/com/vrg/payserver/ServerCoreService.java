@@ -32,6 +32,7 @@ import com.vrg.payserver.service.vo.ClientNewRechargeRequest;
 import com.vrg.payserver.service.vo.ClientNewRechargeResponse;
 import com.vrg.payserver.service.vo.NotifySubAgentRequest;
 import com.vrg.payserver.service.vo.NotifySubAgentResponse;
+import com.vrg.payserver.service.vo.RechargeMultipleChannelTradeNo;
 import com.vrg.payserver.service.vo.RechargeRecordBase;
 import com.vrg.payserver.service.vo.RechargeRequestException;
 import com.vrg.payserver.service.vo.RechargeRequestLog;
@@ -49,11 +50,11 @@ public class ServerCoreService implements IServerCoreService {
 	private static final String[] EXCEPTION_CODE = new String[] { ErrorCode.ERR_CHANNEL_TRADE_NO_NOTSAME, ErrorCode.ERR_CHANNEL_APP_ID_NOTSAME, ErrorCode.ERR_UID_NOTSAME, ErrorCode.ERR_PAID_TIME_OUT, ErrorCode.ERR_PRODUCT_ID_NOTSAME,
 			ErrorCode.ERR_PRODUCT_NAME_NOTSAME, ErrorCode.ERR_PRODUCT_QUANTITY_NOTSAME, ErrorCode.ERR_PAID_AMOUNT_NOTSAME, ErrorCode.ERR_SEARCH_CHANNEL_ORDER_TIMEOUT, ErrorCode.ERR_SEARCH_CHANNEL_ORDER_FAIL, ErrorCode.ERR_BLACKLIST_IP };
 	
-//	static {
-//		Arrays.sort(EXCEPTION_CODE);
-//	}
+	static {
+		Arrays.sort(EXCEPTION_CODE);
+	}
 
-	@Value("${xgsdk.recharge_request_log.save:true}")
+	@Value("${vrg.recharge_request_log.save:true}")
 	private boolean saveRechargeRequestLog;
 	@Autowired
 	private ChannelParamRepository channelParamRepository;
@@ -83,33 +84,17 @@ public class ServerCoreService implements IServerCoreService {
 	private RechargeRequestExceptionService rechargeRequestExceptionService;
 	
 	@Override
-	public String getParamValue(String planId, String channelId, String paramName) {
-		// TODO Auto-generated method stub
+	public String getParamValue(String partnerId, String channelId, String paramName) {
 		return null;
 	}
 
 	@Override
-	public List<String> getParamValues(String xgAppId, String channelId, String paramName) {
-		// TODO Auto-generated method stub
+	public List<RechargeRecordBase> getUnPaidRechargeRecordByUid(String xgAppId, String channelId) {
 		return null;
 	}
 
 	@Override
-	public List<RechargeRecordBase> getUnPaidRechargeRecordByUid(String xgAppId, String channelId, String uid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<RechargeRecordBase> getWaitPayRechargeRecordByUid(String xgAppId, String channelId, String uid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RechargeRecordBase getRechargeRecordByProductId(String xgAppId, String channelId, String uid,
-			String productId) {
-		// TODO Auto-generated method stub
+	public List<RechargeRecordBase> getWaitPayRechargeRecordByUid(String xgAppId, String channelId) {
 		return null;
 	}
 
@@ -246,12 +231,6 @@ public class ServerCoreService implements IServerCoreService {
 		rechargeRecord.setCustomInfo(customInfo.toJSONString());
 	}
 	
-	@Override
-	public String getServerAppSecret(String planId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public ClientNewRechargeResponse createOrder(ClientNewRechargeRequest request) {
 		return gameClientService.createOrder(request);
@@ -472,5 +451,11 @@ public class ServerCoreService implements IServerCoreService {
 			"sub-channel server response is not excepted, httpCode={0}, notifySubChannelRequest={1}, notifySubChannelResponse={2}, notifyUrl={3}, chargeLogId={4}",
 			"200", notifySubAgentRequest, notifySubAgentResponse, notifyUrl, chargeLogId));
 		return;
+	}
+
+	@Override
+	public void saveMultipleChannelTradeNo(RechargeMultipleChannelTradeNo rechargeMultipleChannelOrderNo) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -9,6 +9,7 @@ import com.vrg.payserver.service.vo.ChannelNotifyRequest;
 import com.vrg.payserver.service.vo.ChannelRequest;
 import com.vrg.payserver.service.vo.ClientNewRechargeRequest;
 import com.vrg.payserver.service.vo.ClientNewRechargeResponse;
+import com.vrg.payserver.service.vo.RechargeMultipleChannelTradeNo;
 import com.vrg.payserver.service.vo.RechargeRecordBase;
 import com.vrg.payserver.service.vo.RechargeRequestException;
 import com.vrg.payserver.service.vo.RechargeRequestLog;
@@ -16,15 +17,11 @@ import com.vrg.payserver.service.vo.RechargeRequestLog;
 
 public interface IServerCoreService {
 
-	String getParamValue(String planId, String channelId, String paramName);
+	String getParamValue(String partnerId, String channelId, String paramName);
 
-	List<String> getParamValues(String xgAppId, String channelId, String paramName);
+	List<RechargeRecordBase> getUnPaidRechargeRecordByUid(String partnerId, String channelId);
 
-	List<RechargeRecordBase> getUnPaidRechargeRecordByUid(String xgAppId, String channelId, String uid);
-
-	List<RechargeRecordBase> getWaitPayRechargeRecordByUid(String xgAppId, String channelId, String uid);
-
-	RechargeRecordBase getRechargeRecordByProductId(String xgAppId, String channelId, String uid, String productId);
+	List<RechargeRecordBase> getWaitPayRechargeRecordByUid(String partnerId, String channelId);
 
 	RechargeRecordBase getRechargeRecordByTradeNo(String tradeNo);
 
@@ -41,21 +38,13 @@ public interface IServerCoreService {
 	 */
 	boolean checkChannelTradeNo(String tradeNo, String channelTradeNo, String originalChannelTradeNo, String channelId, Date paidTime);
 
-	void onPayException(ChannelNotifyRequest xgRequest);
+	void onPayException(ChannelNotifyRequest gwRequest);
 
-	void onPaySuccess(ChannelRequest xgRequest);
+	void onPaySuccess(ChannelRequest gwRequest);
 
-	void onPayException(ChannelRequest xgRequest);
+	void onPayException(ChannelRequest gwRequest);
 	
 	void onPayFail(RechargeRecordBase rechargeRecord);
-
-	/**
-	 * 获取游戏服务端密钥
-	 *
-	 * @param xgAppId
-	 * @return
-	 */
-	public String getServerAppSecret(String planId);
 
 	/**
 	 * 创建订单
@@ -96,5 +85,10 @@ public interface IServerCoreService {
 	public void cancelRechargeRecordStatus(RechargeRecordBase rechargeRecord);
 
 	public void deleteRechargeFailLog(RechargeRecordBase rechargeFailLog);
-
+	
+	/**
+	 * 保存支付渠道重复通知的订单
+	 * @param rechargeMultipleChannelOrderNo
+	 */
+	void saveMultipleChannelTradeNo(RechargeMultipleChannelTradeNo rechargeMultipleChannelOrderNo);
 }

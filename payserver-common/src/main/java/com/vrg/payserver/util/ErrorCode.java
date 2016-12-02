@@ -1,9 +1,5 @@
 package com.vrg.payserver.util;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public interface ErrorCode {
   // 0 成功
   String SUCCESS = "0";

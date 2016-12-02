@@ -3,10 +3,6 @@
  */
 package com.vrg.payserver.util;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public interface RequestType {
 	String TYPE_FIELD = "type";
 	// 事件类型

@@ -43,25 +43,24 @@ public class ChannelController {
 
 	@Autowired
 	private ChannelRepository channelRepository;
-	
+
 	@Autowired
 	private RechargeRequestLogService rechargeRequestLogService;
-	
+
 	@Autowired
 	private ChannelService channelService;
-	
+
 	@Autowired
 	private ParamRepository paramRepository;
-	
+
 	@Autowired
-	private ClientService gameClientService;
-	
+	private ClientService clientService;
+
 	@Autowired
 	private RechargeRecordStatusMapper rechargeRecordStatusMapper;
-	
+
 	@RequestMapping(value = "/pay/create-order/{channelId}/{partnerId}")
 	public ResponseEntity<ClientNewRechargeResponse> createOrder(HttpServletRequest hRequest, @PathVariable String channelId, @PathVariable String partnerId) {
-		Date requestTime = new Date();
 		Log.startAction(LogAction.CREATE_ORDER, partnerId, channelId, IPUtils.getRemoteAddr(hRequest), null);
 		ClientNewRechargeResponse response = null;
 		ClientNewRechargeRequest request = null;
@@ -70,12 +69,12 @@ public class ChannelController {
 			request.setPartnerId(partnerId);
 			request.setChannelId(channelId);
 			Log.changeLogContextTypeToAppErr();
-			
+
 			// check sign
 			Log.enterStep("验签");
 			String type = RequestType.CREATE_ORDER;
-			if (!StringUtils.equalsIgnoreCase(type, request.getType()) || !gameClientService.verifySign(request, request.getSign(), request.getPartnerId(), channelId)) {
-				response = gameClientService.createNewRechargeResponse(request);
+			if (!StringUtils.equalsIgnoreCase(type, request.getType()) || !clientService.verifySign(request, request.getSign(), request.getPartnerId(), channelId)) {
+				response = clientService.createNewRechargeResponse(request);
 				response.setCode(ErrorCode.ERR_SIGN);
 				response.setMsg(ErrorCode.ERR_SIGN_MSG);
 				return ResponseEntity.ok(response);
@@ -83,20 +82,20 @@ public class ChannelController {
 
 			// 创建订单
 			Log.enterStep("创建订单");
-			response = gameClientService.createOrder(request);
+			response = clientService.createOrder(request);
 			if (!StringUtils.equals(ErrorCode.SUCCESS, response.getCode())) {
-				Log.supplementMessage("createOrder failed, channelId = {}, partnerId = {}, request data = {}, response data = {}.", channelId, partnerId, request, response);				
+				Log.supplementMessage("createOrder failed, channelId = {}, partnerId = {}, request data = {}, response data = {}.", channelId, partnerId, request, response);
 				return ResponseEntity.ok(response);
 			}
 
 			// create channel order
 			Log.enterStep("创建渠道订单");
 			request.setTradeNo(response.getData().getTradeNo());
-			Log.supplementBizInfo(partnerId, channelId, response.getData().getTradeNo(), null,response.getData().getSign(), null, null);
-			CreateChannelOrderResponse createChannelResponse = this.createChannelOrder(request);
+			Log.supplementBizInfo(partnerId, channelId, response.getData().getTradeNo(), null, response.getData().getSign(), null, null);
+			CreateChannelOrderResponse createChannelResponse = createChannelOrder(request);
 			if (createChannelResponse != null && !StringUtils.equalsIgnoreCase(createChannelResponse.getCode(), ErrorCode.SUCCESS)) {
-			  // 渠道订单创建失败
-				Log.supplementMessage("create channel order failed, channelId = {}, partnerId = {}, request data = {}, response data = {}.", channelId, partnerId, request, createChannelResponse);				
+				// 渠道订单创建失败
+				Log.supplementMessage("create channel order failed, channelId = {}, partnerId = {}, request data = {}, response data = {}.", channelId, partnerId, request, createChannelResponse);
 				response = new ClientNewRechargeResponse();
 				response.setCode(createChannelResponse.getCode());
 				response.setMsg(createChannelResponse.getMsg());
@@ -106,30 +105,33 @@ public class ChannelController {
 			if (createChannelResponse != null && createChannelResponse.getData() != null) {
 				// 获取渠道创建的订单号
 				CreateChannelOrderResponseData channelResponseData = createChannelResponse.getData();
-//				Log.supplementBizInfo(null, null, null, null, null, null, null, channelTradeNo, null, null, null, null, null, null, null);
-//				if (!StringUtils.isEmpty(channelTradeNo)) {
-//					rechargeRecordStatusMapper.updateChannelTradeNoByTradeNo(response.getData().getTradeNo(), channelTradeNo);
-//				}
-//
-//				response.getData().setChannelTradeNo(channelTradeNo);
+				String channelTradeNo = channelResponseData.getChannelTradeNo();
+				Log.supplementBizInfo(null, null, null, null,channelTradeNo, null, null);
+				if (!StringUtils.isEmpty(channelTradeNo)) {
+					rechargeRecordStatusMapper.updateChannelTradeNoByTradeNo(response.getData().getTradeNo(), channelTradeNo);
+				}
+				
+				response.getData().setChannelTradeNo(channelTradeNo);
 				response.getData().setNonceStr(channelResponseData.getNonceStr());
 				response.getData().setPrepayId(channelResponseData.getPrepayId());
 				response.getData().setSubmitTime(channelResponseData.getSubmitTime());
 				response.getData().setTokenUrl(channelResponseData.getTokenUrl());
 			}
 			// 补齐签名
-		  response.getData().setSign(SignCore.xgSign(response.getData(), SignCore.SIGN_FIELD_NAME, paramRepository.getClientAppKey(request.getPartnerId())));
+			response.getData().setSign(SignCore.xgSign(response.getData(), SignCore.SIGN_FIELD_NAME, paramRepository.getClientAppKey(request.getPartnerId())));
 			Log.changeLogContextTypeToInfo();
 			return ResponseEntity.ok(response);
 		} catch (Throwable t) {
-			response = gameClientService.createNewRechargeResponse(request);
+			response = clientService.createNewRechargeResponse(request);
 			response.setCode(ErrorCode.ERR_SYSTEM);
 			response.setMsg(t.getMessage());
 			Log.endActionWithError(LogAction.CREATE_ORDER, t, request, response);
 			return ResponseEntity.ok(response);
+		} finally {
+			Log.endAction(LogAction.CREATE_ORDER, response == null ? "" : response.getCode(), request, response);
 		}
 	}
-	
+
 	private CreateChannelOrderResponse createChannelOrder(ClientNewRechargeRequest cRequest) {
 		// 获取渠道版本
 		String channelId = cRequest.getChannelId();
@@ -143,7 +145,7 @@ public class ChannelController {
 			Date requestTime = new Date();
 			CreateChannelOrderResponse response = channelImpl.createChannelOrder(request);
 			if (response != null) {
-				this.saveCreateChannelOrderLog(request, response, requestTime);
+				saveCreateChannelOrderLog(request, response, requestTime);
 			}
 			return response;
 		}
@@ -176,13 +178,13 @@ public class ChannelController {
 		requestLog.setResponseTime(new Date());
 		rechargeRequestLogService.push(requestLog);
 	}
-	
+
 	@RequestMapping(value = "/pay-notify/{channelId}/{partnerId}")
 	public ResponseEntity<?> notifyRechargeResult(HttpServletRequest originalRequest, @PathVariable String channelId, @PathVariable String partnerId) {
 		String errorMessage = "";
 		JSONObject requestData = null;
 		String postData = null;
-		
+
 		//记录开始日志
 		Log.startAction(LogAction.PAY_NOTIFY, partnerId, channelId, IPUtils.getRemoteAddr(originalRequest), null);
 		try {
@@ -203,7 +205,7 @@ public class ChannelController {
 				Log.endActionWithWarn(LogAction.PAY_NOTIFY, new Throwable("Can not find channel impl"), StringUtils.isEmpty(postData) ? requestData : postData, null);
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 			}
-			
+
 			ret = channel.notifyRechargeResult(hRequest, channelId, partnerId);
 			Log.supplementMessage(MessageFormat.format("end to notifyRechargeResult, channelId={0}, partnerId={1}, requestData={2}, response={3}", channelId, partnerId, requestData, ret.getBody()));
 			Log.endAction(LogAction.PAY_NOTIFY, null, StringUtils.isEmpty(postData) ? requestData : postData, ret);

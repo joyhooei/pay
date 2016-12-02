@@ -3,10 +3,6 @@
  */
 package com.vrg.payserver.vo;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public class RechargeRequestObject {
 	private String requestType;
 	private Object request;

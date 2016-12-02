@@ -13,10 +13,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.vrg.payserver.util.IPUtils;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public class RechargeRequestLog {
 	// ID NUMBER(20) 事件流水号 主键
 	private long id;

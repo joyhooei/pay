@@ -27,10 +27,6 @@ import org.apache.http.NameValuePair;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-/**
- * @author LUCHUNLIANG
- *
- */
 public class SignCore {
 
 	public static final String GAME_CHARSET = "UTF-8";
