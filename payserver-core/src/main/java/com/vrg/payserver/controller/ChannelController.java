@@ -116,9 +116,10 @@ public class ChannelController {
 				response.getData().setPrepayId(channelResponseData.getPrepayId());
 				response.getData().setSubmitTime(channelResponseData.getSubmitTime());
 				response.getData().setTokenUrl(channelResponseData.getTokenUrl());
+				response.getData().setUrl(channelResponseData.getUrl());
 			}
 			// 补齐签名
-			response.getData().setSign(SignCore.xgSign(response.getData(), SignCore.SIGN_FIELD_NAME, paramRepository.getClientAppKey(request.getPartnerId())));
+			response.getData().setSign(SignCore.xgSign(response.getData(), SignCore.SIGN_FIELD_NAME, paramRepository.getServerSecret(request.getPartnerId())));
 			Log.changeLogContextTypeToInfo();
 			return ResponseEntity.ok(response);
 		} catch (Throwable t) {

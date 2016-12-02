@@ -1,5 +1,7 @@
 package com.xgsdk.sdkserver.impl;
 
+import java.text.MessageFormat;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -113,7 +115,7 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
 	public CreateChannelOrderResponse createChannelOrder(CreateChannelOrderRequest request) {
 		CreateChannelOrderResponse response = new CreateChannelOrderResponse();
 		CreateChannelOrderResponseData data = new CreateChannelOrderResponseData();
-		response.setData(data);
+
 		KuBeiCreateOrderRequest kudongPay = new KuBeiCreateOrderRequest();
     	kudongPay.setN(NOTIFY_URL);
     	kudongPay.setP(PID);
@@ -122,8 +124,25 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
     	kudongPay.setP3(request.getPaidAmount());
     	
     	String doGet = HttpUtils.doGet(CREATE_ORDER_URL + kudongPay.genURLParameter(KEY));
+    	
+    	if (StringUtils.isEmpty(doGet)) {
+			response.setCode(ErrorCode.ERR_CREATE_CHANNEL_ORDER_FAIL);
+			response.setMsg(MessageFormat.format(
+				"Can not connect to kubei channel server[{0}].", CREATE_ORDER_URL));
 
-    	data.setUrl(doGet);
+			return response;
+		}
+    	
+    	JSONObject resultObject = JSON.parseObject(doGet);
+    	if (!StringUtils.equals("0", resultObject.getString("RESULT"))) {
+			response.setCode(ErrorCode.ERR_CREATE_CHANNEL_ORDER_FAIL);
+			response.setMsg("The response of kubei channel is create order fail");
+
+			return response;
+		}
+    	response.setCode(ErrorCode.SUCCESS);
+    	data.setUrl(resultObject.getString("BODY"));
+    	response.setData(data);
         return response;
 	}
 

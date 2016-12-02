@@ -6,7 +6,7 @@ package com.vrg.payserver.service.vo;
 import com.alibaba.fastjson.JSON;
 
 public class ClientNewRechargeRequest {
-	// type 是 String 接口类型，固定为update-order
+	// type 是 String 接口类型，固定为create-order
 	private String type;
 	/*
 	 * partnerId 设备编号

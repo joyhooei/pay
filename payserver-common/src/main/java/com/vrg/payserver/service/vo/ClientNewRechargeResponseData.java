@@ -28,6 +28,17 @@ public class ClientNewRechargeResponseData {
 	private String tokenUrl;
 	// submitTime 否 String 订单创建时间，目前用于金立，时间格式是yyyyMMddHHmmss
 	private String submitTime;
+	
+	private String url;
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
 	// sign 是 String 签名，签名算法参见签名章节，使用游戏客户端密钥[]
 	private String sign;
 

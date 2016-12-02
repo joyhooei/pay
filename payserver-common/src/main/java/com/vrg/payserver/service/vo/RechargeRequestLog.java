@@ -28,11 +28,11 @@ public class RechargeRequestLog {
 	// 9 verify-session，默认File
 	// 10 get-channel-param，默认File
 	private String eventType;
-	// TRADE_NO VARCHAR2(64) XGSDK订单号
+	// TRADE_NO VARCHAR2(64) GW订单号
 	private String tradeNo;
 	// CHANNEL_TRADE_NO VARCHAR(64) 渠道订单号
 	private String channelTradeNo;
-	// XG_APP_ID VARCHAR2(64) XGSDK游戏编号
+	// XG_APP_ID VARCHAR2(64) GW游戏编号
 	private String partnerId;
 	// CHANNEL_ID VARCHAR2(32) 运营商编号
 	private String channelId;
