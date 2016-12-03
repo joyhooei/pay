@@ -54,7 +54,7 @@ public class KuBeiChannelAdapter implements IChannelAdapter {
 			requestData.setPayStatus(ErrorCode.SUCCESS);
 			requestData.setTradeNo(channelData.getP7());
 			requestData.setChannelTradeNo(channelData.getP0());
-			requestData.setPaidAmount(CurrencyUtil.yuanToFenInt(channelData.getP3()));
+			requestData.setPaidAmount(Integer.valueOf(channelData.getP3()));
 			requestData.setPaidTime(DateUtil.parse(channelData.getP2()));
 			requestData.setChannelObject(channelData);
 		} catch (Throwable t) {

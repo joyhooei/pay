@@ -36,9 +36,6 @@ public class NotifySubAgentRequest {
 	// InAppPay,WalletPay, CardPay, PlatformPay。通知游戏的时候，值为  InAppPay,WalletPay 才通知游戏
 	@JsonInclude(Include.NON_NULL)
 	private String payType;
-	//渠道订单号
-	@JsonInclude(Include.NON_NULL)
-	private String channelTradeNo;
 
 	// payStatus 是 String 订单支付状态
 	// 1 支付成功
@@ -291,14 +288,6 @@ public class NotifySubAgentRequest {
 
 	public void setPayType(String payType) {
 		this.payType = payType;
-	}
-
-	public String getChannelTradeNo() {
-		return channelTradeNo;
-	}
-
-	public void setChannelTradeNo(String channelTradeNo) {
-		this.channelTradeNo = channelTradeNo;
 	}
 
 }

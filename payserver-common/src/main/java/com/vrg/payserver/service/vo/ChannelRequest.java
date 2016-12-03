@@ -38,10 +38,10 @@ public class ChannelRequest {
 	 */
 	private String channelTradeNo; 
 	
-	/*
-	 * 支付金额, 单位为分
-	 */
-	private int paidAmount;
+//	/*
+//	 * 支付金额, 单位为分
+//	 */
+//	private int paidAmount;
 	
 	/*
 	 * 折扣金额， 单位为分
@@ -302,13 +302,13 @@ public class ChannelRequest {
 		this.randomString = randomString;
 	}
 
-	public int getPaidAmount() {
-		return paidAmount;
-	}
-
-	public void setPaidAmount(int paidAmount) {
-		this.paidAmount = paidAmount;
-	}
+//	public int getPaidAmount() {
+//		return paidAmount;
+//	}
+//
+//	public void setPaidAmount(int paidAmount) {
+//		this.paidAmount = paidAmount;
+//	}
 
 	public int getDiscountAmount() {
 		return discountAmount;

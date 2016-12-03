@@ -8,12 +8,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class ClientNewRechargeResponseData {
-	// channelPartnerId 否 String 渠道分配唯一标识
-	//private String channelPartnerId;
 	// partnerId 是 String vrg的唯一标识
 	private String partnerId;
-	// channelId 是 String 运营渠道编号
-	//private String channelId;
 	// tradeNo 是 String 订单号
 	private String tradeNo;
 	
@@ -23,13 +19,16 @@ public class ClientNewRechargeResponseData {
 	// prepayId 否 String 预支付订单号
 	private String prepayId;
 	// nonceStr 否 String 32位内的随机串，防重发
+	@JsonInclude(Include.NON_NULL)
 	private String nonceStr;
 	// customInfo 否 String 自定义字段，原样返回
 	private String customInfo;
 	// tokenUrl 否 String
 	// 目前用于腾讯渠道应用侧在唤起购买SDK前，应用后台支付服务器下的订单Url，也就是调用buy_goods_m支付Api时返回的url_params的值
+	@JsonInclude(Include.NON_NULL)
 	private String tokenUrl;
 	// submitTime 否 String 订单创建时间，目前用于金立，时间格式是yyyyMMddHHmmss
+	@JsonInclude(Include.NON_NULL)
 	private String submitTime;
 	
 	private String url;
@@ -49,21 +48,6 @@ public class ClientNewRechargeResponseData {
 	public String toString() {
 		return JSON.toJSONString(this);
 	}
-
-	/**
-	 * @return the channelId
-	 */
-//	public String getChannelId() {
-//		return channelId;
-//	}
-
-	/**
-	 * @param channelId
-	 *            the channelId to set
-	 */
-//	public void setChannelId(String channelId) {
-//		this.channelId = channelId;
-//	}
 
 	/**
 	 * @return the tradeNo
@@ -184,14 +168,6 @@ public class ClientNewRechargeResponseData {
 	public void setSign(String sign) {
 		this.sign = sign;
 	}
-
-//	public String getChannelPartnerId() {
-//		return channelPartnerId;
-//	}
-//
-//	public void setChannelPartnerId(String channelPartnerId) {
-//		this.channelPartnerId = channelPartnerId;
-//	}
 
 	public String getPartnerId() {
 		return partnerId;

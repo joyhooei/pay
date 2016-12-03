@@ -61,6 +61,7 @@
 	
 	<select id="queryByTradeNo" resultType="com.vrg.payserver.service.vo.RechargeRecordBase">
 		SELECT
+			charge_log_id,
 			trade_no,
 			partner_id,
 			channel_id,
@@ -82,6 +83,7 @@
 	
 	<select id="queryByChannelTradeNo" resultType="com.vrg.payserver.service.vo.RechargeRecordBase">
 		SELECT
+			charge_log_id,
 			trade_no,
 			partner_id,
 			channel_id,

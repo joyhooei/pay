@@ -16,11 +16,6 @@ public class ClientNewRechargeRequest {
 	// 支付渠道id
 	private String channelId;
 	
-	// 请求创建订单的客户端ip
-	//private String deviceIp;
-	
-	//private String channelPartnerId;
-	
 	/*
 	 * notifyUrl 是  String 支付成功后的通知地址
 	 */
@@ -52,7 +47,7 @@ public class ClientNewRechargeRequest {
 	private String tradeNo;
 	
 	/*
-	 *  channelTradeNo 支付渠道侧分配的订单号
+	 *  channelTradeNo 支付渠道侧分配的订单号，预留给银联直接接入使用
 	 */
 	//private String channelTradeNo;
 
@@ -82,14 +77,6 @@ public class ClientNewRechargeRequest {
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
-
-//	public String getCurrencyName() {
-//		return currencyName;
-//	}
-//
-//	public void setCurrencyName(String currencyName) {
-//		this.currencyName = currencyName;
-//	}
 
 	public String getPaidAmount() {
 		return paidAmount;
@@ -130,30 +117,6 @@ public class ClientNewRechargeRequest {
 	public void setTradeNo(String tradeNo) {
 		this.tradeNo = tradeNo;
 	}
-
-//	public String getChannelTradeNo() {
-//		return channelTradeNo;
-//	}
-//
-//	public void setChannelTradeNo(String channelTradeNo) {
-//		this.channelTradeNo = channelTradeNo;
-//	}
-//	
-//	public String getDeviceIp() {
-//		return deviceIp;
-//	}
-//
-//	public void setDeviceIp(String deviceIp) {
-//		this.deviceIp = deviceIp;
-//	}
-//
-//	public String getChannelPartnerId() {
-//		return channelPartnerId;
-//	}
-//
-//	public void setChannelPartnerId(String channelPartnerId) {
-//		this.channelPartnerId = channelPartnerId;
-//	}
 
 	@Override
 	public String toString() {

@@ -223,9 +223,9 @@ public class ServerCoreService implements IServerCoreService {
 			customInfo = JSONObject.parseObject(rechargeRecord.getCustomInfo());
 		}
 
-		if (rechargeRecord.getPaidAmount() != channelRequest.getPaidAmount()) {
+		if (rechargeRecord.getPaidAmount() != channelRequest.getPayNoticeRequestData().getPaidAmount()) {
 			customInfo.put("originalPaidAmount", rechargeRecord.getPaidAmount());
-			rechargeRecord.setPaidAmount(channelRequest.getPaidAmount());
+			rechargeRecord.setPaidAmount(channelRequest.getPayNoticeRequestData().getPaidAmount());
 		}
 		
 		rechargeRecord.setCustomInfo(customInfo.toJSONString());
@@ -335,8 +335,10 @@ public class ServerCoreService implements IServerCoreService {
 		notifySubAgentRequest.setTs(SignCore.getTs());
 		notifySubAgentRequest.setPaidTime(format.format(rechargeRecord.getPaidTime()));
 		notifySubAgentRequest.setPayStatus(payStatus);
+		notifySubAgentRequest.setTradeNo(rechargeRecord.getTradeNo());
+		notifySubAgentRequest.setCustomInfo(rechargeRecord.getCustomInfo());
 		notifySubAgentRequest.setPaidAmount(String.valueOf(rechargeRecord.getPaidAmount()));
-		notifySubAgentRequest.buildRechargeOrderExt();
+//		notifySubAgentRequest.buildRechargeOrderExt();
 		
 		String secretKey = partnerRespository.getSecretKey(rechargeRecord.getPartnerId());
 		notifySubAgentRequest.setSign(SignCore.xgSign(notifySubAgentRequest, SignCore.SIGN_FIELD_NAME, secretKey));
