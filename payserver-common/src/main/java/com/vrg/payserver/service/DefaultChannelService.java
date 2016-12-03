@@ -27,7 +27,6 @@ import com.vrg.payserver.util.ErrorCode;
 import com.vrg.payserver.util.IPUtils;
 import com.vrg.payserver.util.Log;
 import com.vrg.payserver.util.RequestType;
-import com.vrg.payserver.util.Util;
 
 public final class DefaultChannelService implements IChannel {
 	public static final String URL_PATTERN = "{0}://{1}:{2}{3}";
@@ -333,15 +332,10 @@ public final class DefaultChannelService implements IChannel {
 		channelRequestData.setPaidAmount(request.getPaidAmount());
 		// channelRequestData.setPaidTime(paidTime);
 		// channelRequestData.setPayStatus(payStatus);
-//		channelRequestData.setProductId(request.getProductId());
-//		channelRequestData.setProductName(request.getProductName());
-//		channelRequestData.setProductQuantity(request.getProductQuantity());
 		// channelRequestData.setStateCode(stateCode);
 		// channelRequestData.setStateMsg(stateMsg);
 		channelRequestData.setTradeNo(request.getTradeNo());
-//		channelRequestData.setUid(request.getUid());
 		channelRequestData.setCustomInfo(request.getCustomInfo());
-		// channelRequestData.setVoucherAmount(voucherAmount);
 		prequest.putChannelData(channelRequestData);
 
 		try {

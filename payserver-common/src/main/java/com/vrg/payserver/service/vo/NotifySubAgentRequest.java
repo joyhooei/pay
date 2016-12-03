@@ -9,18 +9,12 @@ import java.util.Date;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.vrg.payserver.util.DateUtil;
 import com.vrg.payserver.util.SignCore;
 
 public class NotifySubAgentRequest {
 	// partnerId 是 String vrg分配的partnerId
 	private String partnerId;
-	// channelId 是 String 运营渠道编号
-	private String channelId;
-	// uid 是 String 渠道的用户编号
-	private String uid;
 	// paidAmount 是 String 总支付金额(单位分)
 	private String paidAmount;
 	// customInfo 否 String 游戏方自定义字段，支付成功后回调的时候，透传原样返回
@@ -33,9 +27,6 @@ public class NotifySubAgentRequest {
 	private String tradeNo;
 	// paidTime 是 String 支付时间 yyyyMMddHHmmss
 	private String paidTime;
-	// InAppPay,WalletPay, CardPay, PlatformPay。通知游戏的时候，值为  InAppPay,WalletPay 才通知游戏
-	@JsonInclude(Include.NON_NULL)
-	private String payType;
 
 	// payStatus 是 String 订单支付状态
 	// 1 支付成功
@@ -127,11 +118,9 @@ public class NotifySubAgentRequest {
 			payStatus = PAY_STATUS_SUCCESS;
 		}
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-		data.setChannelId(rechargeRecord.getChannelId());
 		data.setCustomInfo(rechargeRecord.getCustomInfo());
 		data.setPaidAmount(String.valueOf(rechargeRecord.getPaidAmount()));
 		data.setTradeNo(rechargeRecord.getTradeNo());
-		data.setUid(rechargeRecord.getUid());
 		data.setPartnerId(rechargeRecord.getPartnerId());
 		data.setTs(SignCore.getTs());
 		data.setPaidTime(format.format(rechargeRecord.getPaidTime()));
@@ -145,36 +134,6 @@ public class NotifySubAgentRequest {
 
 	public void setExt(String ext) {
 		this.ext = ext;
-	}
-
-	/**
-	 * @return the channelId
-	 */
-	public String getChannelId() {
-		return channelId;
-	}
-
-	/**
-	 * @param channelId
-	 *            the channelId to set
-	 */
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
-	}
-
-	/**
-	 * @return the uid
-	 */
-	public String getUid() {
-		return uid;
-	}
-
-	/**
-	 * @param uid
-	 *            the uid to set
-	 */
-	public void setUid(String uid) {
-		this.uid = uid;
 	}
 
 	/**
@@ -281,13 +240,4 @@ public class NotifySubAgentRequest {
 	public void setPayStatus(String payStatus) {
 		this.payStatus = payStatus;
 	}
-
-	public String getPayType() {
-		return payType;
-	}
-
-	public void setPayType(String payType) {
-		this.payType = payType;
-	}
-
 }
